@@ -11,53 +11,101 @@
         <title>Crear cuenta</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
-    <body class="bg-light">
-        <nav class="navbar navbar-light bg-white shadow-sm mb-4">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'home' %}">Clínica Dental Vitaldent</a>
-                <a class="btn btn-outline-primary btn-sm" href="{% url 'home' %}">Volver a la página principal</a>
-            </div>
-        </nav>
-
-        <div class="container" style="max-width: 720px;">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h1 class="h3 mb-3">Crear una cuenta</h1>
-                    <p class="text-muted">Regístrate para acceder al panel y agendar citas.</p>
-
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-
-                    <form method="post" action="{% url 'signup' %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Usuario</label>
-                            <input class="form-control" id="username" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Correo (opcional)</label>
-                            <input class="form-control" id="email" name="email" type="email">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password1" class="form-label">Contraseña</label>
-                            <input class="form-control" id="password1" name="password1" type="password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password2" class="form-label">Repetir contraseña</label>
-                            <input class="form-control" id="password2" name="password2" type="password" required>
-                        </div>
-                        <button class="btn btn-primary w-100" type="submit">Crear cuenta</button>
-                    </form>
-
-                    <div class="text-center mt-3">
-                        <a href="{% url 'login' %}">¿Ya tienes cuenta? Inicia sesión</a>
-                    </div>
-                </div>
-            </div>
+<body class="auth-bg">
+    <div class="auth-hero">
+        <div class="logo-wrapper text-center">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Vitaldent">
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+        <div class="hero-image">
+            <img src="{% static 'img/equipo3.png' %}" alt="Equipo dental">
+        </div>
+        <a class="btn btn-outline-light btn-sm" href="{% url 'home' %}">Volver a la página principal</a>
+    </div>
+    <div class="auth-card">
+        <h2 class="mb-2">Crear una cuenta</h2>
+        <p class="text-muted mb-4">Completa el formulario para habilitar tu acceso.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'signup' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="form-label">Usuario</label>
+                <input class="form-control" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo (opcional)</label>
+                <input class="form-control" id="email" name="email" type="email">
+            </div>
+            <div class="mb-3">
+                <label for="password1" class="form-label">Contraseña</label>
+                <input class="form-control" id="password1" name="password1" type="password" required>
+            </div>
+            <div class="mb-3">
+                <label for="password2" class="form-label">Repetir contraseña</label>
+                <input class="form-control" id="password2" name="password2" type="password" required>
+            </div>
+            <button class="btn btn-primary w-100 mb-3" type="submit">Crear cuenta</button>
+        </form>
+
+        <div class="text-center">
+            <a href="{% url 'login' %}" class="link-primary">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+    </div>
+
+    <style>
+        body.auth-bg{
+            min-height:100vh;
+            margin:0;
+            display:flex;
+            font-family:'Poppins',sans-serif;
+            background:linear-gradient(135deg,#dfe9ff,#f4f7ff);
+        }
+        .auth-hero{
+            flex:1;
+            padding:60px;
+            color:#fff;
+            background:linear-gradient(135deg,#2563eb,#0ea5e9);
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+        }
+        .logo-wrapper img{
+            width:160px;
+        }
+        .hero-image{
+            flex:1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        .hero-image img{
+            /* Imagen meramente simbólica: tamaño fijo pequeño, responsiva hasta un máximo */
+            width:220px;
+            max-width:80%;
+            height:auto;
+            border-radius:12px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.18);
+        }
+        .auth-card{
+            flex:1;
+            max-width:520px;
+            margin:auto;
+            background:#fff;
+            border-radius:24px;
+            padding:48px;
+            box-shadow:0 25px 55px rgba(15,23,42,0.15);
+        }
+        @media (max-width:900px){
+            body.auth-bg{flex-direction:column;}
+            .auth-hero{padding:32px;}
+            .auth-card{max-width:100%;border-radius:0;box-shadow:none;}
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

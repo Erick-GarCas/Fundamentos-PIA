@@ -12,7 +12,8 @@ body{
     margin: 0;
     background-color: #f4f4f4;
     color: #333;
-    padding-top: 110px; /* Ajusta este valor según la altura de tu header */
+    /* Removed top padding so header/navbar can sit flush at the top as requested */
+    padding-top: 0;
 }
 
 /* Headings use Montserrat */
@@ -218,6 +219,43 @@ h1, h2, h3, h4, h5, h6, .display-5 {
 .checkbox-grid::-webkit-scrollbar-thumb{
     background: rgba(15,23,42,0.2);
     border-radius: 999px;
+}
+
+body.dark .checkbox-grid{
+    background: #0f172a;
+    border-color: rgba(255,255,255,0.12);
+}
+
+body.dark .checkbox-grid .form-check-label{
+    color: #f8fafc;
+}
+
+body.dark .checkbox-grid small{
+    color: #cbd5f5 !important;
+}
+
+body.dark .checkbox-grid .form-check-input{
+    border-color: rgba(255,255,255,0.4);
+    background-color: transparent;
+}
+
+body.dark .checkbox-grid .form-check-input:checked{
+    background-color: #38bdf8;
+    border-color: #38bdf8;
+}
+
+body.dark .form-label,
+body.dark .form-text{
+    color: #e2e8f0;
+}
+
+body.dark input[type="date"],
+body.dark input[type="time"],
+body.dark input[type="text"],
+body.dark input[type="email"]{
+    background: #0b1120;
+    color: #f8fafc;
+    border-color: rgba(255,255,255,0.2);
 }
 
 @media (max-width: 900px){
@@ -988,12 +1026,60 @@ footer{
 /* Dark mode refinado: colores más suaves, contraste consistente y menos glow */
 body.dark{
     background-color: #071022; /* slightly bluish near-black for depth */
-    color: #e6eef9; /* readable text */
+    /* Force white text in dark mode for all elements to match request */
+    color: #ffffff !important;
 }
 
 body.dark .site-header{
     background-color: #071622 !important;
     box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+}
+
+/* Strong overrides to ensure legibility in dark mode:
+   - Force text to white
+   - Make table backgrounds dark so white text is visible
+*/
+body.dark, body.dark *{
+    color: #ffffff !important;
+}
+
+body.dark .card,
+body.dark .admin-kpi,
+body.dark .admin-table .card,
+body.dark .admin-table .card .card-body{
+    background: #0b1420 !important;
+    border-color: rgba(255,255,255,0.03) !important;
+}
+
+/* Tables: remove white backgrounds and make headers/subtle borders show on dark */
+body.dark .admin-table .table,
+body.dark .admin-table .table thead,
+body.dark .admin-table .table tbody,
+body.dark .admin-table .table tr,
+body.dark .admin-table .table td,
+body.dark .admin-table .table th{
+    background: transparent !important;
+    color: #ffffff !important;
+    border-color: rgba(255,255,255,0.06) !important;
+}
+
+body.dark .admin-table .table thead th{
+    color: rgba(255,255,255,0.85) !important;
+}
+
+/* NAVBAR: force black text in the navbar only (even in dark mode) to preserve contrast */
+.admin-navbar, .admin-navbar *{
+    color: #000000 !important;
+}
+.admin-navbar .nav-link{
+    color: #000000 !important;
+}
+.admin-navbar .navbar-brand,
+.admin-navbar .brand-mark{
+    color: #000000 !important;
+}
+.admin-navbar .btn, .admin-navbar .btn *{
+    color: #000000 !important;
 }
 
 body.dark .toggle-btn{
@@ -1066,6 +1152,57 @@ body.dark ::placeholder{
     color: rgba(255,255,255,0.52);
 }
 
+/* Checkbox grid: adapt to dark mode so it doesn't stay a bright card inside dark background */
+body.dark .checkbox-grid{
+    /* Slight frosted card to separate it from the near-black page background */
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #e6f3ff;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+    padding: 0.9rem;
+    border-radius: 0.9rem;
+    backdrop-filter: blur(6px);
+}
+
+body.dark .checkbox-grid .form-check{
+    padding: 8px 6px;
+    border-radius: 8px;
+    transition: background 150ms ease, transform 120ms ease;
+}
+
+body.dark .checkbox-grid .form-check:hover{
+    background: rgba(255,255,255,0.02);
+    transform: translateY(-2px);
+}
+
+body.dark .checkbox-grid .form-check label,
+body.dark .checkbox-grid .form-check .form-check-label{
+    color: #eaf6ff;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+body.dark .checkbox-grid .form-check .price,
+body.dark .checkbox-grid .form-check small{
+    color: rgba(255,255,255,0.6);
+    font-weight: 400;
+    margin-left: 0.25rem;
+    font-size: 0.95rem;
+}
+
+body.dark .checkbox-grid input[type="checkbox"]{
+    filter: none;
+    accent-color: #9fd1ff; /* tint the checkbox to match the theme */
+    width: 18px;
+    height: 18px;
+}
+
+body.dark .checkbox-grid::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.2);
+}
+
 body.dark .accordion-item{
     background: #0f1720;
     border-color: rgba(255,255,255,0.03);
@@ -1086,7 +1223,6 @@ body.dark .accordion-button:not(.collapsed){
    ============================= */
 body.admin-shell{
     background: #f5f7fb;
-    padding-top: 96px;
     min-height: 100vh;
 }
 
@@ -1181,6 +1317,16 @@ body.admin-shell{
 .admin-navbar .btn-outline-danger:hover{
     background: #b91c1c;
     color: #fff;
+}
+
+/* Accessibility controls small styling in navbar */
+.accessibility-controls .btn{
+    padding: 6px 8px;
+    min-width: 40px;
+    border-radius: 6px;
+}
+.accessibility-controls .btn[title]{
+    font-weight: 600;
 }
 
 .admin-main{
@@ -1286,9 +1432,7 @@ body.admin-shell{
         flex-direction: column;
         align-items: flex-start;
     }
-    body.admin-shell{
-        padding-top: 84px;
-    }
+    /* Remove forced top padding so navbar sits at the very top (no empty gap) */
 }
 
 /* Navigation: gentler blue and remove heavy glow */
@@ -1296,6 +1440,14 @@ body.dark .site-nav ul{
     background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
     box-shadow: 0 6px 16px rgba(0,0,0,0.6);
     border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* Force active nav text to black in light mode so it is readable against the
+   white/highlight pill that appears behind the active link. In dark mode we
+   keep the existing white/safe color. */
+body:not(.dark) .site-nav ul li a.active{
+    color: #000000;
+    font-weight: 700;
 }
 
 body.dark .site-nav ul li a{
@@ -1343,4 +1495,96 @@ body.dark .footer-bottom a{
 
 body.dark .accordion-body{
     color: #ffffff;
+}
+
+/* Badges and pills: ensure visibility in dark mode
+   - bg-light badges become subtle dark pills with white text
+   - status "subtle" badges keep a tinted background and readable colored text
+*/
+body.dark .badge.bg-light,
+body.dark .badge.border{
+    background: rgba(255,255,255,0.04) !important;
+    color: #ffffff !important;
+    border-color: rgba(255,255,255,0.06) !important;
+}
+
+body.dark .badge.bg-warning-subtle{
+    background: rgba(245,158,11,0.12) !important; /* amber subtle */
+    color: #f59e0b !important;
+    border-color: rgba(245,158,11,0.18) !important;
+}
+body.dark .badge.bg-success-subtle{
+    background: rgba(16,185,129,0.10) !important; /* green subtle */
+    color: #10b981 !important;
+    border-color: rgba(16,185,129,0.14) !important;
+}
+body.dark .badge.bg-primary-subtle{
+    background: rgba(59,130,246,0.10) !important; /* blue subtle */
+    color: #3b82f6 !important;
+    border-color: rgba(59,130,246,0.14) !important;
+}
+body.dark .badge.bg-danger-subtle{
+    background: rgba(220,38,38,0.10) !important; /* red subtle */
+    color: #dc2626 !important;
+    border-color: rgba(220,38,38,0.14) !important;
+}
+
+/* Secondary subtle (used for 'No' badges) - make it yellow/amber in dark mode
+   so negative/disabled states remain visible and keep semantic contrast. */
+body.dark .badge.bg-secondary-subtle{
+    background: rgba(245,158,11,0.12) !important; /* amber subtle */
+    color: #f59e0b !important;
+    border-color: rgba(245,158,11,0.18) !important;
+}
+
+/* Small rounded pills used for tratamientos in tables: increase contrast */
+body.dark td .badge{
+    box-shadow: none !important;
+}
+
+/* Floating accessibility widget for landing (fixed corner) */
+.floating-accessibility{
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 2200; /* above other UI elements */
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.floating-accessibility .floating-toggle{
+    border-radius: 999px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+.floating-accessibility .floating-controls{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.floating-accessibility .floating-controls .btn{
+    border-radius: 10px;
+    padding: 8px 10px;
+    min-width: 44px;
+    height: 40px;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.12);
+    font-weight: 700;
+}
+
+/* Hide header-based accessibility controls on the landing page when floating widget is present */
+.landing .accessibility-controls{ display: none !important; }
+
+/* Collapsed behavior on very small screens: show only the circular toggle, expand controls when .expanded is set */
+@media (max-width: 520px){
+    .floating-accessibility{ right: 12px; bottom: 12px; }
+    .floating-accessibility .floating-controls{ display: none; }
+    .floating-accessibility.expanded .floating-controls{ display: flex; }
+    .floating-accessibility .floating-toggle{ width: 40px; height: 40px; }
+    .floating-accessibility .floating-controls .btn{ min-width: 36px; height: 36px; padding: 6px 8px; }
 }

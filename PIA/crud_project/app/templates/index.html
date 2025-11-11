@@ -17,7 +17,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
-<body>
+<body class="landing">
     <!-- Header minimalista, centrado y limpio
          - Usa el logo local en assets/img/logo.png
          - Navegación centrada, sin elementos visuales pesados
@@ -45,6 +45,12 @@
 
                 <!-- Acciones derecha -->
                 <div class="site-actions d-flex ms-auto align-items-center">
+                    <div class="accessibility-controls me-2">
+                        <div class="btn-group" role="group" aria-label="Accesibilidad">
+                            <button id="btn-decrease" class="btn btn-outline-secondary btn-sm" type="button" title="Disminuir texto" onclick="decreaseText()">A-</button>
+                            <button id="btn-increase" class="btn btn-outline-secondary btn-sm" type="button" title="Aumentar texto" onclick="increaseText()">A+</button>
+                        </div>
+                    </div>
                     <button id="btn-darkmode" class="toggle-btn" title="Modo oscuro" aria-pressed="false">
                         <i class="bi bi-moon-fill" aria-hidden="true"></i>
                     </button>
@@ -334,9 +340,22 @@
         </div>
     </footer>
 
+    <!-- Floating accessibility controls: fixed in a corner so users can change text size anytime -->
+    <div class="floating-accessibility" id="floating-accessibility" aria-hidden="false">
+        <button id="floating-toggle" class="btn btn-primary floating-toggle" type="button" aria-expanded="false" aria-label="Abrir controles de accesibilidad">
+            <i class="bi bi-type">A</i>
+        </button>
+        <div class="floating-controls" role="group" aria-label="Accesibilidad flotante">
+            <button id="floating-increase" class="btn btn-primary btn-sm" type="button" title="Aumentar texto" onclick="increaseText()">A+</button>
+            <button id="floating-decrease" class="btn btn-primary btn-sm" type="button" title="Disminuir texto" onclick="decreaseText()">A-</button>
+        </div>
+    </div>
+
     <!-- Scripts: primero el bundle de Bootstrap (componentes JS) y luego el script de la app
          main.js contiene la lógica para renderizar servicios, cotizador y validaciones. -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <!-- UI helpers for text size and dark mode (shared with admin) -->
+    <script src="{% static 'js/ui_helpers.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
