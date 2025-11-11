@@ -55,17 +55,28 @@
                             </span>
                         </td>
                         <td class="text-end table-actions">
-                        {% if is_admin %}
-                        <a class="btn btn-sm btn-outline-primary" href="{% url 'citas_editar' c.id %}">Reprogramar</a>
-                        {% endif %}
-                        {% if is_admin or is_employee or can_view_citas %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'citas_marcar_listo' c.id %}">Marcar listo</a>
-                        {% endif %}
-                        {% if is_admin %}
-                        <form method="post" action="{% url 'citas_eliminar' c.id %}" class="d-inline-block" onsubmit="return confirm('¿Eliminar cita?');">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
-                        </form>
+                        {% if c.estatus == 'ATENDIDA' %}
+                            {# Si la cita ya fue atendida, no mostrar acciones salvo eliminar (solo admins) #}
+                            {% if is_admin or is_employee %}
+                            <form method="post" action="{% url 'citas_eliminar' c.id %}" class="d-inline-block" onsubmit="return confirm('¿Eliminar cita?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                            {% endif %}
+                        {% else %}
+                            {# Citas pendientes/activas: permitir reprogramar y marcar listo según permisos #}
+                            {% if is_admin or is_employee %}
+                            <a class="btn btn-sm btn-outline-primary" href="{% url 'citas_editar' c.id %}">Reprogramar</a>
+                            {% endif %}
+                            {% if is_admin or is_employee or can_view_citas %}
+                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'citas_marcar_listo' c.id %}">Marcar listo</a>
+                            {% endif %}
+                            {% if is_admin or is_employee %}
+                            <form method="post" action="{% url 'citas_eliminar' c.id %}" class="d-inline-block" onsubmit="return confirm('¿Eliminar cita?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                            {% endif %}
                         {% endif %}
                         </td>
                     </tr>

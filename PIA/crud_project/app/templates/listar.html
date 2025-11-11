@@ -22,7 +22,9 @@
                 <div class="text-muted text-uppercase small mb-2">Citas registradas</div>
                 <div class="display-5 fw-bold">{{ count_citas }}</div>
                 <p class="text-muted mb-4">Total de solicitudes creadas desde la web.</p>
+                {% if can_view_citas %}
                 <a href="{% url 'citas_listar' %}" class="btn btn-primary btn-sm">Ir a citas</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -43,7 +45,9 @@
             <div class="card-body">
                 <div class="text-muted text-uppercase small mb-2">Accesos rápidos</div>
                 <ul class="list-unstyled admin-quick-links mb-4">
+                    {% if can_view_citas %}
                     <li><a href="{% url 'citas_listar' %}" class="link-dark text-decoration-none">• Revisar agenda del día</a></li>
+                    {% endif %}
                     <li><a href="{% url 'home' %}#faq" class="link-dark text-decoration-none">• Consultar preguntas frecuentes</a></li>
                     {% if is_admin %}
                     <li><a href="{% url 'usuarios_listar' %}" class="link-dark text-decoration-none">• Administrar roles y accesos</a></li>
@@ -62,7 +66,9 @@
                 <h5 class="mb-1">Últimas citas</h5>
                 <p class="text-muted mb-0 small">Mostrando los 5 registros más recientes.</p>
             </div>
+            {% if can_view_citas %}
             <a href="{% url 'citas_listar' %}" class="btn btn-outline-primary btn-sm">Ver todas</a>
+            {% endif %}
         </div>
     </div>
     <div class="card-body">

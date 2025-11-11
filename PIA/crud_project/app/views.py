@@ -308,13 +308,13 @@ def citas_crear(request):
 
 
 @login_required
-@group_required('Administrador')
+@group_required('Administrador', 'Empleado')
 def citas_editar(request, id):
 	cita = get_object_or_404(CitaDental, pk=id)
 	if request.method == 'POST':
 		fecha_val = request.POST.get('fecha_cita')
 		if not fecha_val:
-			messages.error(request, 'Debes seleccionar una fecha y hora.')
+			messages.error(request, 'Debes seleccionar una fecha y hora')
 			return redirect('citas_editar', id=id)
 		fecha = parse_datetime(fecha_val)
 		if fecha:
@@ -323,19 +323,19 @@ def citas_editar(request, id):
 			messages.error(request, 'Fecha inválida.')
 			return redirect('citas_editar', id=id)
 		cita.save(update_fields=['fecha_cita'])
-		messages.success(request, 'Cita reprogramada exitosamente.')
+		messages.success(request, 'Cita reprogramada exitosamente')
 		return redirect('citas_listar')
 	return render(request, 'citas_editar.html', {'cita': cita})
 
 
 @login_required
-@group_required('Administrador')
+@group_required('Administrador', 'Empleado')
 def citas_eliminar(request, id):
 	if request.method != 'POST':
 		return redirect('citas_listar')
 	cita = get_object_or_404(CitaDental, pk=id)
 	cita.delete()
-	messages.success(request, 'Cita eliminada.')
+	messages.success(request, 'Cita eliminada')
 	return redirect('citas_listar')
 
 
@@ -345,7 +345,7 @@ def citas_marcar_listo(request, id):
 	cita = get_object_or_404(CitaDental, pk=id)
 	cita.estatus = CitaDental.ESTATUS_ATENDIDA
 	cita.save()
-	messages.success(request, 'Cita marcada como atendida.')
+	messages.success(request, 'Cita marcada como atendida')
 	return redirect('citas_listar')
 
 
@@ -369,16 +369,16 @@ def tratamientos_crear(request):
 		precio_val = request.POST.get('precio', '').strip()
 
 		if not nombre or not precio_val:
-			messages.error(request, 'Nombre y precio son obligatorios.')
+			messages.error(request, 'Nombre y precio son obligatorios')
 			return redirect('tratamientos_crear')
 		try:
 			precio = Decimal(precio_val)
 		except Exception:
-			messages.error(request, 'Ingrese un precio válido.')
+			messages.error(request, 'Ingrese un precio válido')
 			return redirect('tratamientos_crear')
 
 		Tratamiento.objects.create(nombre=nombre, descripcion=descripcion or '', precio=precio)
-		messages.success(request, 'Tratamiento creado correctamente.')
+		messages.success(request, 'Tratamiento creado correctamente')
 		return redirect('tratamientos_listar')
 	return render(request, 'tratamientos_form.html')
 
@@ -393,19 +393,19 @@ def tratamientos_editar(request, id):
 		precio_val = request.POST.get('precio', '').strip()
 
 		if not nombre or not precio_val:
-			messages.error(request, 'Nombre y precio son obligatorios.')
+			messages.error(request, 'Nombre y precio son obligatorios')
 			return redirect('tratamientos_editar', id=id)
 		try:
 			precio = Decimal(precio_val)
 		except Exception:
-			messages.error(request, 'Ingrese un precio válido.')
+			messages.error(request, 'Ingrese un precio válido')
 			return redirect('tratamientos_editar', id=id)
 
 		tratamiento.nombre = nombre
 		tratamiento.descripcion = descripcion
 		tratamiento.precio = precio
 		tratamiento.save()
-		messages.success(request, 'Tratamiento actualizado.')
+		messages.success(request, 'Tratamiento actualizado')
 		return redirect('tratamientos_listar')
 	return render(request, 'tratamientos_form.html', {'tratamiento': tratamiento})
 
@@ -417,7 +417,7 @@ def tratamientos_eliminar(request, id):
 		return redirect('tratamientos_listar')
 	tratamiento = get_object_or_404(Tratamiento, pk=id)
 	tratamiento.delete()
-	messages.success(request, 'Tratamiento eliminado.')
+	messages.success(request, 'Tratamiento eliminado')
 	return redirect('tratamientos_listar')
 
 
@@ -441,12 +441,12 @@ def reservaciones_crear(request):
 		telefono = request.POST.get('telefono', '').strip()
 		asistentes = request.POST.get('asistentes') or 0
 		if not nombre or not fecha_val:
-			messages.error(request, 'Faltan datos requeridos.')
+			messages.error(request, 'Faltan datos requeridos')
 			return redirect('reservaciones_listar')
 		from django.utils.dateparse import parse_datetime
 		fecha = parse_datetime(fecha_val)
 		if fecha is None:
-			messages.error(request, 'Formato de fecha inválido.')
+			messages.error(request, 'Formato de fecha inválido')
 			return redirect('reservaciones_listar')
 		Reservacion.objects.create(
 			nombre_cliente=nombre,
@@ -454,7 +454,7 @@ def reservaciones_crear(request):
 			telefono=telefono,
 			asistentes=int(asistentes)
 		)
-		messages.success(request, 'Reservación creada correctamente.')
+		messages.success(request, 'Reservación creada correctamente')
 		return redirect('reservaciones_listar')
 	return render(request, 'reservaciones_form.html')
 
@@ -473,7 +473,7 @@ def reservaciones_editar(request, id):
 		r.telefono = request.POST.get('telefono', r.telefono)
 		r.asistentes = int(request.POST.get('asistentes') or r.asistentes)
 		r.save()
-		messages.success(request, 'Reservación actualizada.')
+		messages.success(request, 'Reservación actualizada')
 		return redirect('reservaciones_listar')
 	return render(request, 'reservaciones_form.html', {'reservacion': r})
 
@@ -485,7 +485,7 @@ def reservaciones_eliminar(request, id):
 		return redirect('reservaciones_listar')
 	r = get_object_or_404(Reservacion, pk=id)
 	r.delete()
-	messages.success(request, 'Reservación eliminada.')
+	messages.success(request, 'Reservación eliminada')
 	return redirect('reservaciones_listar')
 
 
@@ -495,7 +495,7 @@ def reservaciones_marcar_listo(request, id):
 	r = get_object_or_404(Reservacion, pk=id)
 	r.estatus = Reservacion.ESTATUS_LISTA
 	r.save()
-	messages.success(request, 'Reservación marcada como lista.')
+	messages.success(request, 'Reservación marcada como lista')
 	return redirect('reservaciones_listar')
 
 
@@ -527,11 +527,11 @@ def usuarios_crear(request):
 		is_superuser = True if request.POST.get('is_superuser') == 'on' else False
 
 		if not username or not password:
-			messages.error(request, 'Usuario y contraseña son requeridos.')
+			messages.error(request, 'Usuario y contraseña son requeridos')
 			return redirect('usuarios_listar')
 
 		if User.objects.filter(username=username).exists():
-			messages.error(request, 'El nombre de usuario ya existe.')
+			messages.error(request, 'El nombre de usuario ya existe')
 			return redirect('usuarios_listar')
 
 		u = User.objects.create_user(username=username, email=email, password=password)
@@ -540,7 +540,7 @@ def usuarios_crear(request):
 		u.save()
 		assign_user_groups(u, role_admin, role_employee, perm_citas, perm_tratamientos)
 
-		messages.success(request, 'Usuario creado correctamente.')
+		messages.success(request, 'Usuario creado correctamente')
 		return redirect('usuarios_listar')
 
 	return render(request, 'users_create.html', {
@@ -576,7 +576,7 @@ def usuarios_editar(request, id):
 		user_obj.save()
 		assign_user_groups(user_obj, role_admin, role_employee, perm_citas, perm_tratamientos)
 
-		messages.success(request, 'Usuario actualizado.')
+		messages.success(request, 'Usuario actualizado')
 		return redirect('usuarios_listar')
 
 	role_flags = {
@@ -603,7 +603,7 @@ def usuarios_eliminar(request, id):
 	user_obj = get_object_or_404(User, pk=id)
 	# prevenir borrado de si mismo por accidente
 	if request.user.pk == user_obj.pk:
-		messages.error(request, 'No puedes eliminarte a ti mismo.')
+		messages.error(request, 'No puedes eliminarte a ti mismo')
 		return redirect('usuarios_listar')
 	user_obj.delete()
 	messages.success(request, 'Usuario eliminado.')
