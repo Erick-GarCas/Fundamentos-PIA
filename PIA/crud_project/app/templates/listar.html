@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% comment %} Página principal del panel (dashboard).
+    Muestra KPIs y las últimas citas. Variables: count_citas, count_tratamientos,
+    recent_citas, is_admin, is_employee.
+{% endcomment %}
+
+{% block title %}Módulo principal{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <small>Resumen general</small>
+        <h1 class="mb-0">Módulo principal</h1>
+    </div>
+    <div class="btn-group" role="group">
+        <button class="btn btn-outline-secondary btn-sm" onclick="decreaseText()">A-</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="increaseText()">A+</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="toggleDark()">Modo</button>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-4">
+        <div class="card admin-kpi h-100">
+            <div class="card-body">
+                <div class="text-muted text-uppercase small mb-2">Citas registradas</div>
+                <div class="display-5 fw-bold">{{ count_citas }}</div>
+                <p class="text-muted mb-4">Total de solicitudes creadas desde la web.</p>
+                <a href="{% url 'citas_listar' %}" class="btn btn-primary btn-sm">Ir a citas</a>
+            </div>
+        </div>
+    </div>
+    {% if can_manage_tratamientos %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card admin-kpi h-100">
+            <div class="card-body">
+                <div class="text-muted text-uppercase small mb-2">Tratamientos activos</div>
+                <div class="display-5 fw-bold">{{ count_tratamientos }}</div>
+                <p class="text-muted mb-4">Procedimientos disponibles para el formulario público.</p>
+                <a href="{% url 'tratamientos_listar' %}" class="btn btn-outline-primary btn-sm">Gestionar</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="col-xl-4">
+        <div class="card admin-kpi h-100">
+            <div class="card-body">
+                <div class="text-muted text-uppercase small mb-2">Accesos rápidos</div>
+                <ul class="list-unstyled admin-quick-links mb-4">
+                    <li><a href="{% url 'citas_listar' %}" class="link-dark text-decoration-none">• Revisar agenda del día</a></li>
+                    <li><a href="{% url 'home' %}#faq" class="link-dark text-decoration-none">• Consultar preguntas frecuentes</a></li>
+                    {% if is_admin %}
+                    <li><a href="{% url 'usuarios_listar' %}" class="link-dark text-decoration-none">• Administrar roles y accesos</a></li>
+                    {% endif %}
+                </ul>
+                <p class="text-muted small mb-0">Mantén la información al día para mejorar la atención a pacientes.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card admin-table">
+    <div class="card-header border-0 pb-0">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <h5 class="mb-1">Últimas citas</h5>
+                <p class="text-muted mb-0 small">Mostrando los 5 registros más recientes.</p>
+            </div>
+            <a href="{% url 'citas_listar' %}" class="btn btn-outline-primary btn-sm">Ver todas</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Fecha</th>
+                        <th>Teléfono</th>
+                        <th>Estatus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in recent_citas %}
+                    <tr>
+                        <td class="fw-semibold">{{ c.nombre_paciente }}</td>
+                        <td>{{ c.fecha_cita|date:"d/M/Y H:i" }}</td>
+                        <td>{{ c.telefono|default:"-" }}</td>
+                        <td>
+                            <span class="badge {% if c.estatus == 'CONFIRMADA' %}bg-success-subtle text-success{% elif c.estatus == 'CANCELADA' %}bg-danger-subtle text-danger{% elif c.estatus == 'ATENDIDA' %}bg-primary-subtle text-primary{% else %}bg-warning-subtle text-warning{% endif %}">
+                                {{ c.get_estatus_display }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">No hay citas registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

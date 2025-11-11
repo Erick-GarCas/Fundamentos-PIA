@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% comment %} Formulario para reprogramar la fecha/hora de una cita existente.
+    La plantilla recibe `cita` con los datos del paciente y muestra el campo
+    `fecha_cita` para editar.
+{% endcomment %}
+{% block title %}Reprogramar cita{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <small>Ajustar horario</small>
+        <h1 class="mb-0">Reprogramar cita</h1>
+    </div>
+    <a href="{% url 'citas_listar' %}" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="form-section-title">Paciente</div>
+                <p class="fw-semibold mb-0">{{ cita.nombre_paciente }}</p>
+            </div>
+            <div class="col-md-4">
+                <div class="form-section-title">Contacto</div>
+                <p class="mb-0">{{ cita.telefono|default:"Sin teléfono" }}</p>
+                <small class="text-muted">{{ cita.correo|default:"Sin correo" }}</small>
+            </div>
+            <div class="col-md-4">
+                <div class="form-section-title">Estatus actual</div>
+                <span class="badge {% if cita.estatus == 'CONFIRMADA' %}bg-success-subtle text-success{% elif cita.estatus == 'CANCELADA' %}bg-danger-subtle text-danger{% elif cita.estatus == 'ATENDIDA' %}bg-primary-subtle text-primary{% else %}bg-warning-subtle text-warning{% endif %}">
+                    {{ cita.get_estatus_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form method="post" action="{% url 'citas_editar' cita.id %}" class="row g-4">
+            {% csrf_token %}
+            <div class="col-md-6">
+                <label class="form-label">Nueva fecha y hora</label>
+                <input type="datetime-local" class="form-control" name="fecha_cita" value="{{ cita.fecha_cita|date:'Y-m-d\\TH:i' }}" required>
+                <div class="form-text">La reprogramación solo afecta la fecha. Datos del paciente se mantienen.</div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                <a href="{% url 'citas_listar' %}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% comment %} Gestión de usuarios y roles. Página accesible solo a admins
+    (controlada desde la vista). Variables: usuarios (QuerySet de User).
+{% endcomment %}
+{% block title %}Gestor de roles{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <small>Control de acceso</small>
+        <h1 class="mb-0">Usuarios</h1>
+    </div>
+    <a href="{% url 'usuarios_crear' %}" class="btn btn-primary">Crear usuario</a>
+</div>
+
+<div class="card admin-table">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Staff</th>
+                        <th>Superuser</th>
+                        <th>Grupos</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td class="fw-semibold">{{ u.username }}</td>
+                        <td>{{ u.email|default:"-" }}</td>
+                        <td>
+                            <span class="badge {% if u.is_staff %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                                {% if u.is_staff %}Sí{% else %}No{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if u.is_superuser %}bg-primary-subtle text-primary{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                                {% if u.is_superuser %}Sí{% else %}No{% endif %}
+                            </span>
+                        </td>
+                        <td>{{ u.groups.all|join:', ' }}</td>
+                        <td class="text-end table-actions">
+                            <a href="{% url 'usuarios_editar' u.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <form method="post" action="{% url 'usuarios_eliminar' u.id %}" class="d-inline-block" onsubmit="return confirm('¿Eliminar usuario?');">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No hay usuarios registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

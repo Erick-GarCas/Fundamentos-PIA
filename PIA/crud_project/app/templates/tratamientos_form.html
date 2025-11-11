@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% comment %} Formulario para crear/editar un tratamiento.
+    Si se pasa `tratamiento` en el contexto la plantilla funciona en modo
+    edición (rellena los campos). Campos: nombre, precio, descripcion.
+{% endcomment %}
+{% block title %}{% if tratamiento %}Editar tratamiento{% else %}Nuevo tratamiento{% endif %}{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <small>Catálogo clínico</small>
+        <h1 class="mb-0">{% if tratamiento %}Editar tratamiento{% else %}Nuevo tratamiento{% endif %}</h1>
+    </div>
+    <a class="btn btn-outline-secondary" href="{% url 'tratamientos_listar' %}">Volver</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form method="post" action="{% if tratamiento %}{% url 'tratamientos_editar' tratamiento.id %}{% else %}{% url 'tratamientos_crear' %}{% endif %}" class="row g-4">
+            {% csrf_token %}
+            <div class="col-md-6">
+                <label class="form-label">Nombre</label>
+                <input class="form-control" name="nombre" value="{% if tratamiento %}{{ tratamiento.nombre }}{% endif %}" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Precio</label>
+                <input class="form-control" type="number" step="0.01" min="0" name="precio" value="{% if tratamiento %}{{ tratamiento.precio }}{% endif %}" required>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Descripción</label>
+                <textarea class="form-control" name="descripcion" rows="4" placeholder="Describe brevemente el procedimiento">{{ tratamiento.descripcion|default:'' }}</textarea>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Guardar</button>
+                <a class="btn btn-outline-secondary" href="{% url 'tratamientos_listar' %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+{% load static %}
+{% comment %} Plantilla de registro (signup).
+    Campos esperados en POST: username, email (opcional), password1, password2.
+    La vista `signup` maneja validaciones y creación de usuario (views.py).
+{% endcomment %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Crear cuenta</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-light">
+        <nav class="navbar navbar-light bg-white shadow-sm mb-4">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}">Clínica Dental Vitaldent</a>
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'home' %}">Volver a la página principal</a>
+            </div>
+        </nav>
+
+        <div class="container" style="max-width: 720px;">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="h3 mb-3">Crear una cuenta</h1>
+                    <p class="text-muted">Regístrate para acceder al panel y agendar citas.</p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" action="{% url 'signup' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <input class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo (opcional)</label>
+                            <input class="form-control" id="email" name="email" type="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">Contraseña</label>
+                            <input class="form-control" id="password1" name="password1" type="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Repetir contraseña</label>
+                            <input class="form-control" id="password2" name="password2" type="password" required>
+                        </div>
+                        <button class="btn btn-primary w-100" type="submit">Crear cuenta</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'login' %}">¿Ya tienes cuenta? Inicia sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

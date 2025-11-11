@@ -1,0 +1,1346 @@
+/* Base: tipografía y colores principales
+   - Define la fuente principal usada en toda la página
+   - Fondo claro y color de texto por defecto */
+html{
+    scroll-behavior: smooth;
+}
+
+body{
+    /* Use Poppins for body text (falls back to system fonts) */
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    display: block;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    padding-top: 110px; /* Ajusta este valor según la altura de tu header */
+}
+
+/* Headings use Montserrat */
+h1, h2, h3, h4, h5, h6, .display-5 {
+    font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+/* Brand color variable (used across the site) */
+:root{ --brand: #0d6efd; --brand-dark: #012a4a; }
+
+/* Improve 'Nosotros' section spacing and make it more llamativo */
+#nosotros{
+    background: #fffefb;
+    padding: 20px 18px; /* un poco más de padding para respirar */
+    border-radius: 10px;
+    color: #333;
+}
+
+/* Reduce gap between the section title and the content row (override Bootstrap mt-3) */
+#nosotros > .row{ margin-top: 8px; }
+
+#nosotros h2{
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--brand-dark);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+    position: relative;
+}
+
+/* Decorative underline/marker under the title */
+#nosotros h2::after{
+    content: "";
+    display: block;
+    width: 84px;
+    height: 6px;
+    background: linear-gradient(90deg, var(--brand), #073763);
+    border-radius: 4px;
+    margin-top: 10px;
+    box-shadow: 0 6px 18px rgba(13,110,253,0.12);
+}
+
+/* Reusable section title (used in Nosotros and other sections) */
+.section-title{
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--brand-dark);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title::after{
+    content: "";
+    display: block;
+    width: 84px;
+    height: 6px;
+    background: linear-gradient(90deg, var(--brand), #073763);
+    border-radius: 4px;
+    margin-top: 10px;
+    box-shadow: 0 6px 18px rgba(13,110,253,0.12);
+}
+
+.section-title i{
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: linear-gradient(90deg,var(--brand), #073763);
+    color: #fff;
+    font-size: 1.05rem;
+}
+
+/* Cotizador specific styles */
+#cotizacion .card{
+    border-radius: 10px;
+    box-shadow: 0 10px 28px rgba(2,6,23,0.06);
+    border: none;
+}
+
+#cotizacion .card .form-label{
+    font-weight: 600;
+}
+
+#cotizacion .card .btn{
+    background: var(--brand);
+    border: none;
+    padding: 12px 18px;
+    font-weight: 700;
+}
+
+/* Result box style */
+#resultado-cotizacion{
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    padding: 18px;
+}
+
+#resultado-cotizacion h5{
+    margin: 0 0 6px 0;
+}
+
+/* Make the left form and right result look balanced */
+.cotizacion-row{ display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
+.cotizacion-left{ flex: 1 1 520px; }
+.cotizacion-right{ flex: 0 0 360px; }
+
+/* Slider para tratamientos */
+.treatments-slider{
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.slider-window{
+    overflow: hidden;
+    flex: 1;
+}
+
+.slider-track{
+    display: flex;
+    width: 100%;
+    transition: transform 0.4s ease;
+}
+
+.slider-page{
+    flex: 0 0 100%;
+    padding: 0.25rem;
+}
+
+.slider-btn{
+    border: none;
+    background: #fff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    box-shadow: 0 8px 20px rgba(15,23,42,0.15);
+    color: #2563eb;
+    font-size: 1.4rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-btn:disabled{
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.slider-dots{
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.slider-dots button{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: #d1d9e6;
+    padding: 0;
+}
+
+.slider-dots button.active{
+    background: #2563eb;
+}
+
+.treatments-counter{
+    font-weight: 600;
+}
+
+/* Checkbox grid for cita form */
+.checkbox-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 0.35rem 1rem;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: #f8fafc;
+}
+
+.checkbox-grid .form-check{
+    margin-bottom: 0;
+}
+
+.checkbox-grid::-webkit-scrollbar{
+    width: 6px;
+}
+
+.checkbox-grid::-webkit-scrollbar-thumb{
+    background: rgba(15,23,42,0.2);
+    border-radius: 999px;
+}
+
+@media (max-width: 900px){
+    .cotizacion-row{ display: block; }
+    .cotizacion-right{ width: 100%; margin-top: 12px; }
+}
+
+/* Intro paragraph styling: slightly larger, more contrast, less spacing */
+/* Default: texto oscuro en modo claro. En modo oscuro se sobreescribe con `body.dark`. */
+#nosotros p:first-of-type{
+    font-size: 1.06rem;
+    color: #111111; /* dark text for light mode */
+    line-height: 1.7;
+    margin-top: 4px;
+    margin-bottom: 12px;
+}
+
+/* Make the image pop a bit more */
+.img-nosotros{
+    width: 100%;
+    max-width: 420px;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.12);
+    transform: translateY(-6px);
+}
+
+/* Contenedor central (.content)
+   - Tarjeta visualizada en el centro con sombra ligera
+   - Usada para aislar el contenido principal */
+.content{
+    background-color: #fff;
+    margin: 10px auto;
+    width: 95%;
+    padding: 18px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Header base y estilos relacionados (logo, navegación y acciones)
+   -- El hero se define más abajo de forma clara y sin duplicados. */
+
+/* Fijar el header en la parte superior */
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #ffffff;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+}
+
+.site-header .site-logo{
+    display: inline-block;
+    /* Tamaño aumentado: más presencia visual según solicitud */
+    height: 72px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.site-header .site-actions{
+    /* Usar layout flex normal para que los botones se alineen con el centro del header */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto; /* empuja las acciones a la derecha dentro de .header-inner */
+}
+
+.site-header .site-actions button{
+    border-radius: 6px;
+    padding: 6px 8px;
+}
+
+/* Toggle de modo oscuro: botón circular simple y accesible */
+.toggle-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #222;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: background 150ms ease, transform 120ms ease, box-shadow 150ms ease;
+}
+
+.toggle-btn i{
+    font-size: 14px;
+}
+
+.toggle-btn:hover{ transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.10); }
+
+.toggle-btn.active{
+    background: #0d6efd;
+    color: #fff;
+    border-color: transparent;
+}
+
+/* Botón de inicio de sesión: estilo pill limpio con icono + texto */
+.login-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #0d6efd;
+    border: 1px solid #e6e9ef;
+    font-weight: 600;
+    text-decoration: none;
+    transition: box-shadow 140ms ease, transform 120ms ease;
+}
+
+.login-btn i{ font-size: 14px; }
+
+.login-btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(13,110,253,0.08);
+}
+
+/* En dispositivos pequeños se mantiene legibilidad pero sin acciones lateral */
+@media (max-width: 520px){
+    .login-btn .login-text{ display: none; }
+    .toggle-btn{ width: 36px; height: 36px; }
+}
+
+/* Barra de navegación compacta */
+.site-nav{
+    display: flex;
+    justify-content: center;
+}
+
+.site-nav ul{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 10px 16px;
+    background: linear-gradient(90deg,#eef4ff,#d7e8ff);
+    border-radius: 999px;
+    max-width: 900px;
+    box-shadow: 0 18px 42px rgba(8,38,73,0.18);
+    border: 1px solid rgba(13,110,253,0.12);
+}
+
+.site-nav ul li a{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0a2c5c;
+    text-decoration: none;
+    padding: 10px 22px;
+    font-weight: 700;
+    border-radius: 999px;
+    transition: color 150ms ease;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.site-nav ul li a::after{
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: inherit;
+    background: rgba(255,255,255,0.9);
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 160ms ease, transform 200ms ease, box-shadow 200ms ease;
+    z-index: -1;
+    box-shadow: 0 8px 20px rgba(13,110,253,0.18);
+}
+
+.site-nav ul li a:hover,
+.site-nav ul li a:focus{
+    color: #000000; /* en modo claro, texto negro para resaltar al hacer hover */
+}
+
+.site-nav ul li a:hover::after,
+.site-nav ul li a:focus::after{
+    opacity: 1;
+    transform: scale(1);
+}
+
+.site-nav ul li a.active{
+    color: #012a4a;
+}
+
+.site-nav ul li a.active::after{
+    opacity: 1;
+    transform: scale(1);
+}
+
+body.dark .site-nav ul{
+    background: rgba(13,110,253,0.18);
+    box-shadow: 0 12px 30px rgba(2,14,30,0.65);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+body.dark .site-nav ul li a{
+    color: #e3edff;
+}
+
+body.dark .site-nav ul li a:hover,
+body.dark .site-nav ul li a:focus{
+    background-color: rgba(255,255,255,0.14);
+    color: #ffffff;
+}
+
+body.dark .site-nav ul li a.active{
+    background-color: #0d6efd;
+    color: #ffffff;
+    box-shadow: 0 10px 26px rgba(13,110,253,0.45);
+}
+
+@media (max-width: 520px){
+    .site-nav ul{
+        padding: 8px 10px;
+        gap: 4px;
+    }
+    .site-nav ul li a{
+        padding: 8px 14px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Header inner layout: logo left, nav centered (absolute), actions right */
+.header-inner{
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 72px; /* asegura suficiente espacio vertical */
+}
+
+.header-inner .site-nav{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* En pantallas pequeñas: apilar y hacer la navegación estática bajo logo */
+@media (max-width: 900px){
+    .header-inner{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .header-inner .site-nav{
+        position: static;
+        transform: none;
+        margin-top: 6px;
+    }
+
+    .site-actions{ justify-content: flex-end; }
+}
+
+@media (max-width: 900px){
+    /* En móvil, ocultar acciones y reducir tamaño del logo */
+    .site-header .site-actions{ display: none; }
+    /* Tamaño de logo reducido en móvil para mantener equilibrio */
+    .site-header .site-logo{ height: 60px; }
+}
+
+/* Título en header */
+header h1{
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Navegación: barra principal
+   - Bloque simple, fondo sólido y bordes suaves
+   - Los enlaces se muestran como bloques para facilitar interacción */
+nav{
+    background-color: #0b5ed7;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+/* Lista de navegación
+   - Flexbox para distribuir los enlaces horizontalmente */
+nav ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Cada item de navegación: ocupa espacio equitativo */
+nav ul li{
+    flex: 1;
+    text-align: center;
+}
+
+/* Enlaces de navegación: apariencia y espaciado */
+nav ul li a{
+    display: block;
+    padding: 10px 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Estado hover para mejorar feedback visual */
+nav ul li a:hover{
+    background-color: #0a58ca;
+}
+
+/* Secciones principales con contenedores tipo 'card' */
+/* Separación entre secciones */
+section{
+    margin-top: 18px;
+}
+
+/* Estilo base para tarjetas reutilizables */
+.card{
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Nosotros */
+/* Sección Nosotros: fondo suave para destacar contenido */
+#nosotros{
+    background: #fffefb;
+    padding: 16px;
+    border-radius: 8px;
+    color: #333;
+}
+
+/* Mejora legibilidad del texto en Nosotros */
+#nosotros p{
+    color: #111111;
+    line-height: 1.5;
+}
+
+/* Imagen del equipo o instalaciones */
+.img-nosotros{
+    width: 100%;
+    max-width: 420px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+}
+
+/* Feature / Valores cards styling */
+.feature-grid{ 
+    gap: 18px;
+    display: flex;
+    align-items: stretch; /* asegura que las columnas se estiren a la misma altura */
+    flex-wrap: wrap; /* permite apilar en pantallas pequeñas */
+}
+
+/* For precise 3-column layout on wide screens we calculate widths including gaps */
+.feature-grid > .col-md-4{
+    display: flex; /* para que .feature-card pueda estirarse dentro */
+    flex: 0 0 calc((100% - 36px) / 3); /* 36px = 2 * gap (left + right) approx */
+    min-width: 260px; /* evita que los cards queden demasiado estrechos en móvil */
+    box-sizing: border-box;
+    padding: 0 6px; /* espacio interno para el gap visual */
+}
+
+.feature-card{
+    --brand: #0d6efd; /* color principal (logo) */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* centra verticalmente el contenido para aspecto uniforme */
+    align-items: flex-start;
+    height: 220px; /* altura fija para garantizar dimensiones idénticas */
+    padding: 22px 20px;
+    border-left: 8px solid rgba(13,110,253,0.18);
+    background: linear-gradient(180deg, rgba(13,110,253,0.03), #ffffff);
+    transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms ease;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+    border-radius: 10px;
+    height: 100%;
+}
+
+.feature-card .card-title{
+    font-weight: 700;
+    color: #012a4a; /* tono cerca del logo para títulos */
+    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feature-card i{
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 8px;
+    background: linear-gradient(90deg,var(--brand), #073763);
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.feature-card:hover{
+    transform: translateY(-8px);
+    box-shadow: 0 18px 40px rgba(2,6,23,0.12);
+}
+
+/* Entrance animation */
+@keyframes fadeInUp{
+    from{ opacity: 0; transform: translateY(10px); }
+    to{ opacity: 1; transform: translateY(0); }
+}
+
+.feature-card{
+    animation: fadeInUp 420ms ease both;
+}
+
+/* Staggered entrance: small delays for each card */
+.feature-grid > .col-md-4:nth-child(1) .feature-card{ animation-delay: 0ms; }
+.feature-grid > .col-md-4:nth-child(2) .feature-card{ animation-delay: 80ms; }
+.feature-grid > .col-md-4:nth-child(3) .feature-card{ animation-delay: 160ms; }
+
+/* Responsive: en móvil las cards apilan y mantienen apariencia */
+@media (max-width: 900px){
+    .feature-card{ height: auto; min-height: 120px; padding: 16px; }
+    .feature-grid > .col-md-4{ flex: 1 1 100%; padding: 0; }
+}
+
+/* Servicios - tarjetas estilo simple */
+/* Contenedor donde se inyectan las tarjetas de servicios desde JS */
+#servicios-list{
+    margin-top: 10px;
+}
+
+/* Imagen en tarjeta de servicio
+   - object-fit: cover mantiene el recorte centrado */
+#servicios-list .card img{
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Texto auxiliar para características del servicio */
+.service-features{
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* Cotizador y formularios */
+/* Formularios: apariencia base para los forms tipo tarjeta */
+form.card{
+    background: #ffffff;
+    border: 1px solid #eee;
+}
+
+/* Inputs y textarea: tamaño y espaciado uniforme */
+input,
+textarea,
+select{
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* Botones: puntero para indicar acción clicable */
+button{
+    cursor: pointer;
+}
+
+/* Galería */
+/* Galería
+   NOTE: `#galeria-grid` is used as the .carousel-inner in the HTML. Previously it
+   was forced to `display: grid`, which breaks the Bootstrap carousel layout and
+   produced narrow / sliced images. Remove the grid rule and keep portable
+   gallery image styles. */
+
+/* Miniaturas: mantener proporción con object-fit (usado si en el futuro se
+   usa una vista de miniaturas estática). */
+.gallery-card{
+    padding: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(2,6,23,0.06);
+    background: #fff;
+}
+
+.gallery-img{
+    display: block;
+    width: 100%;
+    height: 220px; /* altura de miniatura cuando se use en grid */
+    object-fit: cover;
+    object-position: center center;
+}
+
+@media (max-width: 900px){
+    .gallery-img{ height: 160px; }
+}
+
+/* Carousel-specific image sizing so photos are visible and not thin slices */
+.carousel .gallery-img{
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    object-position: center center;
+}
+
+@media (max-width: 900px){
+    .carousel .gallery-img{ height: 220px; }
+}
+
+/* Ensure carousel inner doesn't overflow and keep Bootstrap's slide behavior intact */
+.carousel-inner{ overflow: hidden; }
+
+/* Make indicators more visible (long pills) */
+.carousel-indicators button{
+    width: 34px;
+    height: 6px;
+    border-radius: 6px;
+    background-color: rgba(255,255,255,0.55);
+    border: none;
+    transition: background-color 150ms ease, opacity 150ms ease;
+}
+.carousel-indicators .active{
+    background-color: #ffffff;
+    opacity: 1;
+}
+
+/* Testimonios */
+/* Estrellas de testimonio: color destacado */
+.testimonial-star{
+    color: #ffb400;
+    font-weight: 700;
+}
+
+/* FAQ acordeón (estilo sencillo) */
+/* Acordeón FAQ: bordes suaves */
+.accordion-item{
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Contacto en el footer */
+.site-footer{
+    background: linear-gradient(180deg, #eef4ff 0%, #d9e8ff 100%);
+    color: #0b1f2e;
+    padding: 4rem 0 0;
+}
+
+.site-footer .container{
+    max-width: 1120px;
+}
+
+.footer-contact{
+    margin-bottom: 3rem;
+    justify-content: center;
+}
+
+.footer-contact .col-md-6{
+    display: flex;
+}
+
+.footer-contact h2,
+.footer-contact label,
+.footer-contact p{
+    color: #0b1f2e;
+}
+
+.footer-contact .card{
+    border: none;
+    box-shadow: 0 16px 45px rgba(1,42,74,0.15);
+    border-radius: 18px;
+    width: 100%;
+    height: 100%;
+    color: #0b1f2e;
+}
+
+.footer-location{
+    background: #ffffff;
+    color: #0b1f2e;
+    border: none;
+    border-radius: 18px;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 16px 45px rgba(1,42,74,0.15);
+}
+
+.footer-bottom{
+    background: linear-gradient(90deg, #0d6efd 0%, #4aa8ff 100%);
+    color: #ffffff;
+    padding: 1.75rem 0;
+    border: none !important;
+    border-radius: 30px 30px 0 0;
+    box-shadow: 0 -18px 35px rgba(13,110,253,0.25);
+}
+
+.footer-bottom a{
+    color: #ffffff;
+}
+
+@media (max-width: 768px){
+    .footer-contact h2{
+        text-align: center;
+    }
+    .footer-contact .card{
+        margin-bottom: 1.5rem;
+    }
+}
+#contacto p{
+    margin: 0 0 8px 0;
+}
+
+/* Iframe de mapa: quitar borde por defecto */
+.ratio iframe{
+    border: 0;
+}
+
+/* Footer utility spacing */
+footer{
+    margin-top: 18px;
+}
+
+/* Adaptaciones responsive sencillas */
+/* Media query: reglas para pantallas pequeñas (<=900px)
+   - Cambia la navegación de horizontal a vertical
+   - Ajusta el ancho del contenedor para mejorar lectura en móviles */
+@media (max-width: 900px){
+    nav ul{
+        flex-direction: column;
+    }
+
+    nav ul li{
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .content{
+        width: 96%;
+    }
+}
+
+/* Hero / Banner principal */
+.hero{
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    /* Imagen de fondo: instalaciones3.png (local). Se mantiene cover/center y la altura mínima
+       para conservar exactamente las dimensiones y el tamaño del contenedor. */
+    background-image: url('../img/instalaciones3.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    min-height: 420px; /* fuerza altura mínima para mantener proporciones */
+}
+
+/* Si el hero incluye un <img> (opción A), desactivar el background-image del bloque
+   para evitar duplicación y que la imagen inline controle el recorte (object-fit). */
+.hero.has-img{
+    background-image: none;
+}
+
+/* Overlay oscuro para mejorar legibilidad del texto sobre la imagen */
+.hero::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Overlay: reducido a 0.22 para que la imagen de fondo sea más visible
+       (puedes aumentar si necesitas más contraste sobre la foto) */
+    background: rgba(0,0,0,0.22);
+    z-index: 1;
+    border-radius: 12px;
+}
+
+
+.hero{
+    display: flex;
+    align-items: center;   /* centra verticalmente */
+    justify-content: center; /* centra horizontalmente */
+}
+
+.hero-text{
+    position: relative;
+    z-index: 2; /* encima del overlay */
+    text-align: center;
+    color: #ffffff;
+    padding: 0 18px;
+}
+
+/* Optional fallback: if you prefer inserting an <img> inside the .hero
+     (instead of background-image), use an element like:
+
+     <div class="hero">
+         <img src="assets/img/instalaciones3.png" class="hero-bg" alt="instalaciones">
+         <div class="hero-text">...</div>
+     </div>
+
+     This CSS will keep the same dimensions and cover behavior. */
+.hero .hero-bg{
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        z-index: 0; /* below overlay and text */
+        pointer-events: none; /* ensure hero content is interactive */
+}
+
+/* Ajustes tipográficos del hero para que el texto no se corte y sea legible
+   - disminuimos el tamaño del título dentro del hero para evitar que sobresalga */
+.hero .display-5{
+    font-size: 2.6rem; /* tamaño menor que el estándar display-5 para este hero */
+    line-height: 1.05;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.45);
+}
+
+.hero .lead{
+    color: rgba(255,255,255,0.92);
+    font-size: 1.05rem;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.35);
+}
+
+/* Botón CTA en hero: fondo claro para contraste y sombra ligera */
+.hero .hero-cta,
+.hero-cta{
+    display: inline-block;
+    background: rgba(255,255,255,0.95);
+    color: #012a4a;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    box-shadow: 0 8px 22px rgba(2,6,23,0.06);
+    transition: transform 120ms ease, box-shadow 140ms ease;
+}
+
+.hero .hero-cta:hover{ transform: translateY(-3px); box-shadow: 0 12px 30px rgba(2,6,23,0.09); }
+
+/* Final .hero-text positioning is handled above (relative + flex centering). */
+
+/* Botón modo oscuro (pequeño estilo) */
+#btn-darkmode{
+    border-radius: 6px;
+}
+
+/* Galería: animación al pasar el cursor */
+.gallery-img{
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.gallery-img:hover{
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* Carrusel / testimonios: espaciado */
+.carousel-item{
+    padding: 24px 0;
+}
+
+/* Dark mode refinado: colores más suaves, contraste consistente y menos glow */
+body.dark{
+    background-color: #071022; /* slightly bluish near-black for depth */
+    color: #e6eef9; /* readable text */
+}
+
+body.dark .site-header{
+    background-color: #071622 !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+}
+
+body.dark .toggle-btn{
+    background: #0b1622;
+    color: #f1f6fb;
+    border-color: rgba(255,255,255,0.04);
+}
+
+body.dark .login-btn{
+    background: #0b1622;
+    border-color: rgba(255,255,255,0.04);
+    color: #9fd1ff;
+}
+
+body.dark .login-btn:hover{
+    box-shadow: 0 8px 20px rgba(2,6,23,0.28);
+}
+
+body.dark #nosotros{
+    background: #0b1620;
+    color: #e6eef9;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.55);
+}
+
+body.dark #nosotros h2,
+body.dark .section-title{
+    color: #f7f9ff;
+}
+
+body.dark #nosotros p{
+    color: #eaf3ff; /* keep intro readable but not pure white */
+}
+
+body.dark #nosotros h2::after,
+body.dark .section-title::after{
+    background: linear-gradient(90deg,#5bb2ff,#0d6efd);
+    box-shadow: 0 6px 18px rgba(13,110,253,0.22);
+}
+
+body.dark .feature-card,
+body.dark .card{
+    background: #0f1720; /* slightly lighter than pure black for separation */
+    color: #e6eef9;
+    border: 1px solid rgba(255,255,255,0.02);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+}
+
+body.dark .feature-card .card-title,
+body.dark .feature-card p,
+body.dark .feature-card li{
+    color: inherit;
+}
+
+body.dark .service-features,
+body.dark label,
+body.dark .form-label,
+body.dark p{
+    color: #cfd9ee;
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select{
+    background: #08121a;
+    color: #f1f6fb;
+    border: 1px solid rgba(255,255,255,0.04);
+}
+
+body.dark ::placeholder{
+    color: rgba(255,255,255,0.52);
+}
+
+body.dark .accordion-item{
+    background: #0f1720;
+    border-color: rgba(255,255,255,0.03);
+}
+
+body.dark .accordion-button{
+    background: #0f1720;
+    color: #ffffff;
+}
+
+body.dark .accordion-button:not(.collapsed){
+    background: rgba(13,110,253,0.14);
+    color: #ffffff;
+}
+
+/* =============================
+   Admin dashboard styles
+   ============================= */
+body.admin-shell{
+    background: #f5f7fb;
+    padding-top: 96px;
+    min-height: 100vh;
+}
+
+.admin-navbar{
+    background: #ffffffcc;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(15,23,42,0.06);
+    font-family: 'Montserrat', sans-serif;
+    padding: 0.65rem 0;
+}
+
+.admin-navbar .navbar-brand{
+    font-weight: 700;
+    color: #0f172a;
+    gap: 0.45rem;
+}
+
+.admin-navbar .brand-mark{
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    color: #fff;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 18px rgba(14,165,233,0.35);
+}
+
+.admin-navbar .brand-copy small{
+    font-size: 0.75rem;
+}
+
+.admin-navbar .nav-link{
+    font-weight: 600;
+    color: #6b7280;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    transition: all 0.2s ease;
+    text-transform: capitalize;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-navbar .nav-link:hover,
+.admin-navbar .nav-link:focus{
+    color: #0d6efd;
+    background-color: rgba(13,110,253,0.08);
+}
+
+.admin-navbar .nav-link.active{
+    color: #0d6efd;
+    background: rgba(13,110,253,0.15);
+    box-shadow: inset 0 0 0 1px rgba(13,110,253,0.2);
+}
+
+.admin-navbar .navbar-collapse{
+    align-items: center;
+}
+
+.admin-navbar .navbar-nav{
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
+    flex-wrap: wrap;
+}
+
+.admin-navbar .nav-item{
+    white-space: nowrap;
+}
+
+.avatar-circle{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e0f2ff;
+    color: #2563eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.admin-navbar .btn-outline-danger{
+    border-color: rgba(220,38,38,0.4);
+    color: #b91c1c;
+}
+
+.admin-navbar .btn-outline-danger:hover{
+    background: #b91c1c;
+    color: #fff;
+}
+
+.admin-main{
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.alert-stack .alert{
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+}
+
+.admin-page-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.admin-page-header h1{
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    margin: 0;
+}
+
+.admin-page-header small{
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.admin-main .card{
+    border: none;
+    border-radius: 1.25rem;
+    box-shadow: 0 18px 38px rgba(15,23,42,0.08);
+}
+
+.admin-kpi{
+    background: linear-gradient(135deg,#ffffff,#f8fbff);
+}
+
+.admin-kpi .display-5{
+    font-size: clamp(2.2rem, 4vw, 3rem);
+}
+
+.admin-kpi .badge{
+    font-size: 0.85rem;
+}
+
+.admin-table .table{
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+.admin-table .table thead th{
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    border-bottom-width: 1px;
+}
+
+.admin-table .table tbody td{
+    vertical-align: middle;
+    color: #1e293b;
+    border-color: rgba(148,163,184,0.2);
+}
+
+.admin-table .table tbody tr:last-child td{
+    border-bottom: none;
+}
+
+.table-actions .btn{
+    margin: 0.15rem 0.15rem 0 0;
+}
+
+.form-card .form-label{
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.form-card .form-text{
+    color: #64748b;
+}
+
+.form-section-title{
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.admin-quick-links li + li{
+    margin-top: 0.35rem;
+}
+
+@media (max-width: 768px){
+    .admin-page-header{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    body.admin-shell{
+        padding-top: 84px;
+    }
+}
+
+/* Navigation: gentler blue and remove heavy glow */
+body.dark .site-nav ul{
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.03);
+}
+
+body.dark .site-nav ul li a{
+    color: #cfe8ff; /* soft light blue text */
+}
+
+body.dark .site-nav ul li a:hover,
+body.dark .site-nav ul li a:focus{
+    background-color: rgba(255,255,255,0.04);
+    color: #ffffff;
+}
+
+body.dark .site-nav ul li a.active{
+    background-color: rgba(13,110,253,0.14);
+    color: #ffffff;
+    box-shadow: none;
+}
+
+body.dark .site-footer{
+    background: #061423;
+    color: #dfeaf9;
+}
+
+body.dark .footer-contact .card,
+body.dark .footer-location{
+    background: #08121a;
+    color: #e6eef9;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+}
+
+body.dark .footer-contact h2,
+body.dark .footer-location h5{
+    color: #f7f9ff;
+}
+
+body.dark .footer-bottom{
+    background: linear-gradient(90deg,#062236 0%, #06304a 100%);
+    color: #f4f7ff;
+    box-shadow: 0 -12px 28px rgba(0,0,0,0.55);
+}
+
+body.dark .footer-bottom a{
+    color: #9fd1ff;
+}
+
+body.dark .accordion-body{
+    color: #ffffff;
+}

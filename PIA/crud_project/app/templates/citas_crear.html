@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% comment %} Formulario para crear una nueva cita desde el panel.
+    En POST envía: nombre_paciente, telefono, correo, fecha_cita.
+    Se valida en la vista `citas_crear` (views.py).
+{% endcomment %}
+{% block title %}Crear cita{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <small>Nueva solicitud</small>
+        <h1 class="mb-0">Crear cita</h1>
+    </div>
+    <a href="{% url 'citas_listar' %}" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form method="post" action="{% url 'citas_crear' %}" class="row g-4">
+            {% csrf_token %}
+            <div class="col-md-6">
+                <label class="form-label">Nombre del paciente</label>
+                <input class="form-control" name="nombre_paciente" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Teléfono de contacto</label>
+                <input class="form-control" name="telefono" pattern="[0-9]{7,15}" required>
+                <div class="form-text">Solo números, de 7 a 15 dígitos.</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Correo electrónico (opcional)</label>
+                <input class="form-control" type="email" name="correo" placeholder="nombre@correo.com">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Fecha y hora</label>
+                <input type="datetime-local" class="form-control" name="fecha_cita" required>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Guardar</button>
+                <a href="{% url 'citas_listar' %}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

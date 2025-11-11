@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% comment %} Listado de tratamientos del sistema. Recibe `tratamientos` en
+    el contexto (QuerySet) y renderiza acciones para editar/eliminar.
+{% endcomment %}
+{% block title %}Tratamientos{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <small>Catálogo clínico</small>
+        <h1 class="mb-0">Tratamientos</h1>
+    </div>
+    <a href="{% url 'tratamientos_crear' %}" class="btn btn-primary">Nuevo tratamiento</a>
+</div>
+
+<div class="card admin-table">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tratamientos %}
+                    <tr>
+                        <td class="fw-semibold">{{ t.nombre }}</td>
+                        <td class="text-muted">{{ t.descripcion|default:"Sin descripción" }}</td>
+                        <td>${{ t.precio }}</td>
+                        <td class="text-end table-actions">
+                            <a href="{% url 'tratamientos_editar' t.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <form method="post" action="{% url 'tratamientos_eliminar' t.id %}" class="d-inline-block" onsubmit="return confirm('¿Eliminar tratamiento?');">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">No hay tratamientos registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
