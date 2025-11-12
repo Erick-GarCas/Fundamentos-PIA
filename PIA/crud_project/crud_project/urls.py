@@ -8,6 +8,7 @@ URLs de autenticación proporcionadas por Django y las rutas de la app.
 
 from django.contrib import admin
 from django.urls import path, include
+from app import views as app_views
 
 
 # Lista principal de rutas. Django las evalúa en orden y ejecuta la
@@ -19,6 +20,7 @@ urlpatterns = [
     # Rutas de autenticación (login, logout, password reset...) que
     # Django proporciona en 'django.contrib.auth.urls'. Se usan en
     # plantillas y views prefabricadas.
+    path('accounts/login/', app_views.login_view, name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
 
     # Incluye las rutas definidas en la aplicación local `app`.

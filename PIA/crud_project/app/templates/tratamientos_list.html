@@ -28,7 +28,7 @@
                 <tbody>
                     {% for t in tratamientos %}
                     <tr>
-                        <td class="fw-semibold">{{ t.nombre }}</td>
+                        <td class="fw-semibold">{{ t.nombre|upper }}</td>
                         <td class="text-muted">{{ t.descripcion|default:"Sin descripción" }}</td>
                         <td>${{ t.precio }}</td>
                         <td class="text-end table-actions">

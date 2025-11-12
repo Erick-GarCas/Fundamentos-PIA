@@ -85,12 +85,12 @@
                 <tbody>
                     {% for c in recent_citas %}
                     <tr>
-                        <td class="fw-semibold">{{ c.nombre_paciente }}</td>
+                        <td class="fw-semibold">{{ c.nombre_paciente|upper }}</td>
                         <td>{{ c.fecha_cita|date:"d/M/Y H:i" }}</td>
                         <td>{{ c.telefono|default:"-" }}</td>
                         <td>
                             <span class="badge {% if c.estatus == 'CONFIRMADA' %}bg-success-subtle text-success{% elif c.estatus == 'CANCELADA' %}bg-danger-subtle text-danger{% elif c.estatus == 'ATENDIDA' %}bg-primary-subtle text-primary{% else %}bg-warning-subtle text-warning{% endif %}">
-                                {{ c.get_estatus_display }}
+                                {{ c.get_estatus_display|upper }}
                             </span>
                         </td>
                     </tr>

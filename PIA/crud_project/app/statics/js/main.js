@@ -388,7 +388,7 @@
 
     // Toggle modo oscuro y login (simulación)
     function setupUI(){
-        const btnDark = document.getElementById('btn-darkmode');
+        const btnDark = document.getElementById('btn-toggle-dark');
         const logoImg = document.querySelector('.site-logo');
 
         const syncThemeState = () => {
@@ -406,7 +406,14 @@
         };
 
         btnDark && btnDark.addEventListener('click', function(){
-            document.body.classList.toggle('dark');
+            if(typeof window.toggleDark === 'function'){
+                window.toggleDark();
+            }else{
+                const isDark = document.body.classList.toggle('dark');
+                try{
+                    localStorage.setItem('prefersDarkMode', isDark ? '1' : '0');
+                }catch(err){}
+            }
             syncThemeState();
         });
 

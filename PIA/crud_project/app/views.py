@@ -7,27 +7,38 @@ para los módulos: Citas, Tratamientos, Reservaciones y Usuarios.
 Notas rápidas:
 - Muchas vistas usan `messages` para feedback al usuario.
 - Se usan decoradores de autorización (`login_required` y `group_required`)
-	para restringir el acceso a ciertas acciones administrativas.
+  para restringir el acceso a ciertas acciones administrativas.
 """
 
-from django.shortcuts import render, redirect
+from decimal import Decimal
+from functools import wraps
+
 from django.contrib import messages
-from django.utils.dateparse import parse_datetime
-from django.http import JsonResponse
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from .models import CitaDental, Tratamiento, Usuario
-from django.contrib.auth.models import User, Group
-from django.contrib.auth import login as auth_login, authenticate
-from django.contrib.auth.hashers import make_password
 from django.db import transaction
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseForbidden
-from django.utils.decorators import method_decorator
-from functools import wraps
-from decimal import Decimal
-from .models import Reservacion
+from django.http import HttpResponseForbidden, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+
+from .models import CitaDental, Reservacion, Tratamiento, Usuario
+
+
+def _is_past_day(dt_obj):
+	"""Devuelve True si la fecha dada corresponde a un día anterior al actual."""
+	if dt_obj is None:
+		return True
+	if timezone.is_aware(dt_obj):
+		dt_obj = timezone.localtime(dt_obj)
+	target_date = dt_obj.date()
+	today = timezone.localdate()
+	return target_date < today
 
 
 def index(request):
@@ -80,6 +91,10 @@ def solicitar_cita(request):
 		messages.error(request, 'Formato de fecha inválido.')
 		return redirect('home')
 
+	if _is_past_day(fecha):
+		messages.error(request, 'La fecha debe ser igual o posterior a hoy.')
+		return redirect('home')
+
 	# Comprobar conflicto (mismo año/mes/día/hora)
 	conflict = CitaDental.objects.filter(
 		fecha_cita__year=fecha.year,
@@ -110,20 +125,20 @@ def solicitar_cita(request):
 
 
 def tratamientos_json(request):
-    """Devuelve la lista de tratamientos en formato JSON para que el frontend los consuma.
-       Cada objeto incluye id, nombre, descripcion, precio (float) y precioTexto.
-    """
-    qs = Tratamiento.objects.all()
-    data = []
-    for t in qs:
-        data.append({
-            'id': t.id,
-            'nombre': t.nombre,
-            'descripcion': t.descripcion or '',
-            'precio': float(t.precio),
-            'precioTexto': f"${t.precio} MXN",
-        })
-    return JsonResponse(data, safe=False)
+	"""Devuelve la lista de tratamientos en formato JSON para que el frontend los consuma.
+	   Cada objeto incluye id, nombre, descripcion, precio (float) y precioTexto.
+	"""
+	qs = Tratamiento.objects.all()
+	data = []
+	for t in qs:
+		data.append({
+			'id': t.id,
+			'nombre': t.nombre,
+			'descripcion': t.descripcion or '',
+			'precio': float(t.precio),
+			'precioTexto': f"${t.precio} MXN",
+		})
+	return JsonResponse(data, safe=False)
 
 
 def signup(request):
@@ -163,7 +178,7 @@ def signup(request):
 				# Crear registro espejo en el modelo Usuario (almacenar email y contraseña hasheada)
 				email_val = email if email else None
 				Usuario.objects.create(email=email_val, password=make_password(p1))
-		except Exception as e:
+		except Exception:
 			# Rollback automático por atomic(); informar al usuario
 			messages.error(request, 'Error al crear la cuenta. Por favor intente nuevamente.')
 			return redirect('signup')
@@ -175,20 +190,26 @@ def signup(request):
 	# GET -> render formulario de registro
 	return render(request, 'signup.html')
 
-# Placeholders para futuras vistas CRUD (seguirás el mismo patrón que te enseñaron)
-# def listar_productos(request):
-#     pass
+
+def login_view(request):
+	"""Vista de login personalizada para usar la plantilla `login.html`."""
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		password = request.POST.get('password')
+		next_url = request.POST.get('next') or 'listar'
+		user = authenticate(request, username=username, password=password)
+		if user:
+			auth_login(request, user)
+			return redirect(next_url)
+		messages.error(request, 'Credenciales inválidas. Intente de nuevo.')
+	next_url = request.GET.get('next', '')
+	return render(request, 'login.html', {'next': next_url})
+
+
 @login_required
 def listar(request):
-	"""Renderiza el template de listado (`listar.html`).
-
-	Por ahora devolvemos un arreglo vacío llamado `contactos` para que la
-	plantilla renderice correctamente. En el futuro puedes reemplazar esto
-	por la consulta al modelo correspondiente.
-	"""
+	"""Renderiza el template de listado (`listar.html`)."""
 	ensure_default_groups()
-	# Mantener compatibilidad: este endpoint ahora actúa como "módulo principal".
-	# Mostramos conteos y algunos registros recientes de Citas y Reservaciones.
 	try:
 		count_citas = CitaDental.objects.count()
 	except Exception:
@@ -199,7 +220,6 @@ def listar(request):
 		count_tratamientos = 0
 
 	recent_citas = CitaDental.objects.all().order_by('-fecha_cita')[:5]
-	# Determinar roles para el template (evitar llamadas complejas en la plantilla)
 	is_admin = False
 	is_employee = False
 	if request.user and request.user.is_authenticated:
@@ -215,11 +235,7 @@ def listar(request):
 
 
 def group_required(*group_names):
-	"""Decorator to require user to be member of at least one group.
-
-	Usage: @group_required('Administrador', 'Empleado')
-	If user is superuser, allow.
-	"""
+	"""Decorator to require user to be member of at least one group."""
 	def decorator(view_func):
 		@wraps(view_func)
 		def _wrapped(request, *args, **kwargs):
@@ -240,7 +256,6 @@ def ensure_default_groups():
 		for name in ('Administrador', 'Empleado', 'Permiso Citas', 'Permiso Tratamientos'):
 			Group.objects.get_or_create(name=name)
 	except Exception:
-		# Evitar que un fallo en la creación bloquee la vista; se manejará manualmente.
 		pass
 
 
@@ -263,10 +278,6 @@ def assign_user_groups(user_obj, role_admin=False, role_employee=False, perm_cit
 	if perm_tratamientos:
 		user_obj.groups.add(group_map['tratamientos'])
 
-
-# ------------------------
-# CRUD simple para CitaDental
-# ------------------------
 
 @login_required
 @group_required('Administrador', 'Empleado', 'Permiso Citas')
@@ -296,6 +307,9 @@ def citas_crear(request):
 		if fecha is None:
 			messages.error(request, 'Formato de fecha inválido.')
 			return redirect('citas_crear')
+		if _is_past_day(fecha):
+			messages.error(request, 'La fecha debe ser igual o posterior a hoy.')
+			return redirect('citas_crear')
 		CitaDental.objects.create(
 			nombre_paciente=nombre,
 			telefono=telefono,
@@ -317,11 +331,13 @@ def citas_editar(request, id):
 			messages.error(request, 'Debes seleccionar una fecha y hora')
 			return redirect('citas_editar', id=id)
 		fecha = parse_datetime(fecha_val)
-		if fecha:
-			cita.fecha_cita = fecha
-		else:
+		if fecha is None:
 			messages.error(request, 'Fecha inválida.')
 			return redirect('citas_editar', id=id)
+		if _is_past_day(fecha):
+			messages.error(request, 'La fecha debe ser igual o posterior a hoy.')
+			return redirect('citas_editar', id=id)
+		cita.fecha_cita = fecha
 		cita.save(update_fields=['fecha_cita'])
 		messages.success(request, 'Cita reprogramada exitosamente')
 		return redirect('citas_listar')
@@ -348,10 +364,6 @@ def citas_marcar_listo(request, id):
 	messages.success(request, 'Cita marcada como atendida')
 	return redirect('citas_listar')
 
-
-# ------------------------
-# CRUD para Tratamientos
-# ------------------------
 
 @login_required
 @group_required('Administrador', 'Permiso Tratamientos')
@@ -421,10 +433,6 @@ def tratamientos_eliminar(request, id):
 	return redirect('tratamientos_listar')
 
 
-# ------------------------
-# CRUD simple para Reservacion
-# ------------------------
-
 @login_required
 @group_required('Administrador', 'Empleado')
 def reservaciones_listar(request):
@@ -443,7 +451,6 @@ def reservaciones_crear(request):
 		if not nombre or not fecha_val:
 			messages.error(request, 'Faltan datos requeridos')
 			return redirect('reservaciones_listar')
-		from django.utils.dateparse import parse_datetime
 		fecha = parse_datetime(fecha_val)
 		if fecha is None:
 			messages.error(request, 'Formato de fecha inválido')
@@ -465,7 +472,6 @@ def reservaciones_editar(request, id):
 	r = get_object_or_404(Reservacion, pk=id)
 	if request.method == 'POST':
 		r.nombre_cliente = request.POST.get('nombre_cliente', r.nombre_cliente)
-		from django.utils.dateparse import parse_datetime
 		fecha_val = request.POST.get('fecha_reservacion')
 		fecha = parse_datetime(fecha_val) if fecha_val else r.fecha_reservacion
 		if fecha:
@@ -497,11 +503,6 @@ def reservaciones_marcar_listo(request, id):
 	r.save()
 	messages.success(request, 'Reservación marcada como lista')
 	return redirect('reservaciones_listar')
-
-
-# ------------------------
-# CRUD para Usuarios (solo Administrador)
-# ------------------------
 
 
 @login_required
@@ -555,7 +556,6 @@ def usuarios_crear(request):
 def usuarios_editar(request, id):
 	ensure_default_groups()
 	user_obj = get_object_or_404(User, pk=id)
-	# No permitir que un admin se elimine o se deje sin staff si es el único superuser? (simple guardia)
 	if request.method == 'POST':
 		username = request.POST.get('username', '').strip()
 		email = request.POST.get('email', '').strip()
@@ -601,7 +601,6 @@ def usuarios_eliminar(request, id):
 	if request.method != 'POST':
 		return redirect('usuarios_listar')
 	user_obj = get_object_or_404(User, pk=id)
-	# prevenir borrado de si mismo por accidente
 	if request.user.pk == user_obj.pk:
 		messages.error(request, 'No puedes eliminarte a ti mismo')
 		return redirect('usuarios_listar')
@@ -611,38 +610,24 @@ def usuarios_eliminar(request, id):
 
 
 def crear(request):
-	"""Vista placeholder para crear un contacto.
-
-	Si se envía POST guarda (simulado) y redirige a listar con mensaje.
-	"""
+	"""Vista placeholder para crear un contacto."""
 	if request.method == 'POST':
-		# Aquí iría la lógica de guardado real; por ahora simulamos éxito
 		messages.success(request, 'Contacto creado correctamente.')
 		return redirect('listar')
 	return render(request, 'crear.html')
 
 
 def editar(request, id):
-	"""Vista placeholder para editar un contacto.
-
-	En GET renderiza el formulario (template `editar.html`). En POST simula
-	actualización y redirige a `listar`.
-	"""
+	"""Vista placeholder para editar un contacto."""
 	if request.method == 'POST':
-		# Lógica de actualización (simulada)
 		messages.success(request, 'Contacto actualizado correctamente.')
 		return redirect('listar')
-	# Pasar el id al template por si lo requiere
 	return render(request, 'editar.html', {'id': id})
 
 
 def eliminar(request, id):
-	"""Elimina un contacto (placeholder).
-
-	Requiere POST (formulario con csrf_token). Luego redirige a `listar`.
-	"""
+	"""Elimina un contacto (placeholder)."""
 	if request.method != 'POST':
 		return redirect('listar')
-	# Aquí se eliminaría el objeto real
 	messages.success(request, 'Contacto eliminado.')
 	return redirect('listar')

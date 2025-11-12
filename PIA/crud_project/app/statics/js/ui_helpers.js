@@ -1,23 +1,24 @@
 // ui_helpers.js
 // Funciones sencillas de UI: modo oscuro, cambiar tamaño de texto y accesibilidad.
 (function(){
-    // Improved UI helpers: persist dark mode and font size in localStorage
-    const LS_DARK = 'prefersDarkMode';
+    // Improved UI helpers: persist font size in localStorage (dark mode always starts in claro)
     const LS_FONTSIZE = 'prefFontSize';
+    let darkState = false;
 
     function applyDark(on){
+        darkState = !!on;
         if(on) document.body.classList.add('dark');
         else document.body.classList.remove('dark');
-        // update toggle button pressed state if present
         const btn = document.getElementById('btn-toggle-dark');
-        if(btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        if(btn){
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            btn.classList.toggle('is-dark', on);
+        }
     }
 
     function toggleDark(){
-        const isDark = document.body.classList.toggle('dark');
-        localStorage.setItem(LS_DARK, isDark ? '1' : '0');
-        const btn = document.getElementById('btn-toggle-dark');
-        if(btn) btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+        const isDark = !darkState;
+        applyDark(isDark);
     }
 
     function changeTextSize(delta){
@@ -31,10 +32,7 @@
 
     // restore preferences on load
     function restorePrefs(){
-        try{
-            const d = localStorage.getItem(LS_DARK);
-            if(d === '1') applyDark(true);
-        }catch(e){}
+        applyDark(false); // siempre inicia en modo claro, el usuario decide si activar oscuro
         try{
             const fs = localStorage.getItem(LS_FONTSIZE);
             if(fs){ document.documentElement.style.fontSize = parseFloat(fs) + 'px'; }

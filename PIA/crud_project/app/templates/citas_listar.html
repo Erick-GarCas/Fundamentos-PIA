@@ -34,7 +34,7 @@
                 <tbody>
                     {% for c in citas %}
                     <tr>
-                        <td class="fw-semibold">{{ c.nombre_paciente }}</td>
+                        <td class="fw-semibold">{{ c.nombre_paciente|upper }}</td>
                         <td>{{ c.fecha_cita|date:"d/m/Y H:i" }}</td>
                         <td>{{ c.telefono|default:"-" }}</td>
                         <td>{{ c.correo|default:"-" }}</td>
@@ -42,7 +42,7 @@
                             {% with lista=c.tratamientos.all %}
                                 {% if lista %}
                                     {% for t in lista %}
-                                        <span class="badge bg-light text-dark border">{{ t.nombre }}</span>
+                                        <span class="badge bg-light text-dark border">{{ t.nombre|upper }}</span>
                                     {% endfor %}
                                 {% else %}
                                     <span class="text-muted">Sin asignar</span>
@@ -51,7 +51,7 @@
                         </td>
                         <td>
                             <span class="badge {% if c.estatus == 'CONFIRMADA' %}bg-success-subtle text-success{% elif c.estatus == 'CANCELADA' %}bg-danger-subtle text-danger{% elif c.estatus == 'ATENDIDA' %}bg-primary-subtle text-primary{% else %}bg-warning-subtle text-warning{% endif %}">
-                                {{ c.get_estatus_display }}
+                                {{ c.get_estatus_display|upper }}
                             </span>
                         </td>
                         <td class="text-end table-actions">
