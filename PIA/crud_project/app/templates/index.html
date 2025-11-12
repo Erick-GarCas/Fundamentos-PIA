@@ -118,13 +118,14 @@
 
     <div class="container">
 
-        <div class="hero card p-4 text-white mt-4 has-img" style="background:none; border:none;">
-
-            <!-- Fallback usando un <img> dentro del hero (opción A). -->
-
-            <img src="{% static 'img/instalaciones3.png' %}" alt="Instalaciones" class="hero-bg" />
-
-
+        <section class="hero card p-4 text-white mt-4 has-img" style="background:none; border:none;" aria-label="Presentación clínica Vitaldent">
+            <figure class="hero-media" role="presentation">
+                <video class="hero-bg" autoplay muted loop playsinline preload="auto" poster="{% static 'img/instalaciones3.png' %}">
+                    <source src="{% static 'videos/video_clinica.mp4' %}" type="video/mp4">
+                    Su navegador no soporta video HTML5.
+                </video>
+                <figcaption class="visually-hidden">Recorrido en video por la clínica Vitaldent.</figcaption>
+            </figure>
 
             <div class="hero-text">
 
@@ -136,7 +137,7 @@
 
             </div>
 
-        </div>
+        </section>
 
     </div>
 

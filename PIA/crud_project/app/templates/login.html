@@ -17,9 +17,13 @@
                 <div class="auth-logo">
                     <img src="{% static 'img/logo.png' %}" alt="Clínica Dental Vitaldent">
                 </div>
-                <div class="auth-media-wrapper">
-                    <img src="{% static 'img/equipo3.png' %}" alt="Consultorio" class="auth-media-img">
-                </div>
+                <figure class="auth-media-wrapper" aria-labelledby="loginMediaCaption">
+                    <video class="auth-media-video" autoplay muted loop playsinline preload="auto" poster="{% static 'img/equipo3.png' %}">
+                        <source src="{% static 'videos/video_consultorio.mp4' %}" type="video/mp4">
+                        Tu navegador no soporta reproducción de video.
+                    </video>
+                    <figcaption id="loginMediaCaption" class="visually-hidden">Video del consultorio dental Vitaldent con equipo completo.</figcaption>
+                </figure>
                 <div class="auth-media-footer">
                     <a class="btn auth-back-btn" href="{% url 'home' %}">
                         <i class="bi bi-arrow-left me-2"></i> Volver a la página principal
