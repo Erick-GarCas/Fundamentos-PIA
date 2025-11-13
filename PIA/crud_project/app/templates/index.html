@@ -2,13 +2,16 @@
 
 {% load static %}
 
-{% comment %} Landing pública (index). Contiene secciones estáticas y dinámicas
-
-    que se rellenan vía JavaScript (tratamientos, galería, testimonios).
-
-    Variables usadas desde el backend: `messages`.
-
-{% endcomment %}
+<!--
+    Plantilla: `index.html` (landing pública).
+    Notas:
+    - `{% load static %}` permite usar `{% static 'ruta' %}` para generar URLs de archivos estáticos.
+    - `{% comment %}...{% endcomment %}` es un comentario de plantilla que no aparece en el HTML final.
+    - `{{ ... }}` imprime valores del contexto que envía la vista.
+    - `messages` es el sistema de notificaciones de Django; se procesa en el servidor.
+    - Muchas secciones (tratamientos, galería) se rellenan con JavaScript en el cliente —
+        el HTML define los contenedores y la estructura; el JS inyecta los datos.
+-->
 
 <html lang="es">
 

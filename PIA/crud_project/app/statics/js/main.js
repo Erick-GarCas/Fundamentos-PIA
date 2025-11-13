@@ -1,4 +1,36 @@
 // main.js - controla renderizado dinámico, validaciones y cotizador
+/*
+ Manual de usuario - Archivo: main.js
+
+ Propósito general:
+ - Proveer la interactividad de la página pública: carga y renderizado de tratamientos,
+     cotizador, formulario de solicitud de cita, galería, testimonios y comportamientos UI
+     (modo oscuro, navegación activa, slider de tratamientos).
+
+ Principales responsabilidades por sección:
+ - Carga de datos: realiza `fetch` a `/api/tratamientos/` para obtener los tratamientos.
+ - Renderizado: crea dinámicamente tarjetas, select y checkboxes de tratamientos.
+ - Validaciones cliente: valida inputs para mejorar UX (teléfono, email, fecha, max 2 tratamientos).
+     OJO: Estas validaciones son solo de UX; las validaciones definitivas se realizan en el servidor
+     y en la base de datos (no confiar exclusivamente en el cliente).
+ - Cotizador: calcula subtotal, descuento y muestra un estimado al usuario.
+ - Formularios: prepara campos ocultos (ej. `fecha-cita`) para envío tradicional al servidor.
+
+ Dependencias y requisitos DOM (elementos esperados):
+ - `#tratamientos-list`, `#tratamiento-select`, `#tratamientos-dots`, `#tratamientos-prev`, `#tratamientos-next`
+ - `#form-cotizacion`, `#cotizacion-output`
+ - `#appointment-form`, `#tratamientos-checkboxes`, `#contact-alert`, `#fecha-cita` (hidden)
+ - `#galeria-grid`, `#galeria-indicators`, `#galleryCarousel`
+ - `#testimonios-list`, `#btn-toggle-dark`, `.site-logo`, `.site-nav`
+
+ Notas de seguridad/arquitectura:
+ - El cliente hace validaciones y prevención de UX; el servidor (Django) debe volver a validar
+     y realizar las comprobaciones críticas (e.g. unicidad por hora, formato email, precio válido).
+ - No hay persistencia en localStorage para citas: el formulario envía tradicionalmente al servidor.
+ - Este archivo asume que la API `/api/tratamientos/` entrega JSON con campos al menos: `id`, `nombre`, `precio`, `precioTexto`, `imagen`, `caracteristicas`, `descripcion`.
+
+ Uso: el script se inicializa en `DOMContentLoaded` llamando a `loadTratamientosAndInit()`.
+*/
 (function(){
     // Cargaremos los tratamientos desde el backend (DB) vía fetch.
     // El arreglo quedará vacío hasta que se carguen los datos desde /api/tratamientos/.
@@ -6,6 +38,12 @@
     const TREATMENTS_PER_PAGE = 4;
     let tratamientoPages = [];
     let currentTratamientoPage = 0;
+
+    // Variables principales:
+    // - `tratamientos`: array con objetos recibidos del endpoint `/api/tratamientos/`.
+    // - `TREATMENTS_PER_PAGE`: número de tarjetas por página en el slider.
+    // - `tratamientoPages`: matriz de páginas (cada página es un slice de `tratamientos`).
+    // - `currentTratamientoPage`: índice de la página actualmente visible.
 
     function updateTratamientosSlider(){
         const track = document.getElementById('tratamientos-list');
@@ -26,6 +64,12 @@
             });
         }
     }
+
+    // updateTratamientosSlider()
+    // - Propósito: desplazar la pista del slider al `currentTratamientoPage`.
+    // - Inputs: usa variables globales definidas arriba y elementos del DOM.
+    // - Efecto: actualiza transform CSS, habilita/deshabilita botones prev/next
+    //   y marca el indicador (dot) activo.
 
     function bindSliderButtons(){
         const prev = document.getElementById('tratamientos-prev');
@@ -49,6 +93,10 @@
             next.dataset.bound = '1';
         }
     }
+
+    // bindSliderButtons()
+    // - Propósito: asociar eventos click a botones prev/next del slider.
+    // - Notas: usa `dataset.bound` para evitar múltiples bindings al mismo elemento.
 
     // Render servicios en la sección principal
     // Renderiza los tratamientos como tarjetas y crea opciones para el cotizador
@@ -155,6 +203,16 @@
         });
     }
 
+    // renderTratamientos()
+    // - Propósito: construir visualmente las tarjetas de tratamientos, las páginas del slider,
+    //   el select para el cotizador y los indicadores (dots).
+    // - Inputs: `tratamientos` (array de objetos) y elementos DOM esperados.
+    // - Comportamiento importante:
+    //   * Crea `option` en `#tratamiento-select` con id y texto (nombre + precioTexto).
+    //   * Crea checkboxes en `#tratamientos-checkboxes` desde `setupAppointmentForm()`.
+    //   * Asigna listeners a botones 'Cotizar' y 'Agendar' para mejorar navegación.
+    // - Nota: no valida la integridad de los objetos `tratamiento` (se asume formato correcto desde la API).
+
     // Cotizador
     // Cotizador: ahora trabaja con un select (un solo tratamiento seleccionado)
     function setupCotizador(){
@@ -187,6 +245,13 @@
             alert('Cotización: $' + totalConDesc.toFixed(2) + ' MXN (ver detalles en la sección de cotización)');
         });
     }
+
+    // setupCotizador()
+    // - Propósito: calcular y mostrar una cotización rápida basada en el tratamiento seleccionado,
+    //   la cantidad y el descuento elegido.
+    // - Validaciones cliente: obliga a seleccionar un tratamiento; calcula usando `tratamiento.precio`.
+    // - Resultado: muestra HTML con detalles y muestra un alert con el total estimado.
+    // - Importante: los precios y disponibilidad deben validarse en el servidor antes de cualquier cobro.
 
     // Solicitud de cita (vinculada a CitaDental)
     // - Renderiza checkboxes de tratamientos (desde `tratamientos`)
@@ -293,6 +358,19 @@
         }
     }
 
+    // setupAppointmentForm()
+    // - Propósito: renderizar y validar el formulario público de solicitud de cita antes del envío.
+    // - Validaciones clave (cliente):
+    //   * `nombre` no vacío
+    //   * `telefono` coincide con `phoneRegex` (7-15 dígitos)
+    //   * máximo 2 tratamientos seleccionados (en el DOM)
+    //   * `fecha` y `hora` presentes y parseables
+    //   * `correo` (si existe) coincide con `emailRegex`
+    // - Nota importante: la comprobación de citas duplicadas por hora NO se hace aquí en el cliente,
+    //   sino en el servidor (Django) — el cliente solo prepara `fecha-cita` en formato ISO para el envío.
+    // - Comportamiento: si la validación cliente falla se previene el submit y se muestra alerta; si pasa,
+    //   se permite el envío tradicional al servidor que realizará validaciones definitivas.
+
     // Galería simple
     function renderGaleria(){
         const grid = document.getElementById('galeria-grid');
@@ -356,6 +434,11 @@
         }
     }
 
+    // renderGaleria()
+    // - Propósito: construir una galería/carousel a partir de rutas estáticas a imágenes.
+    // - Requiere que las imágenes estén disponibles en `/static/img/`.
+    // - Inicializa el componente Bootstrap Carousel y gestiona indicadores.
+
     // Testimonios
     function renderTestimonios(){
         const data = [
@@ -385,6 +468,10 @@
             cont.appendChild(item);
         });
     }
+
+    // renderTestimonios()
+    // - Propósito: inyectar testimonios de ejemplo en la UI.
+    // - En producción estos datos deberían provenir de un endpoint; aquí están hardcodeados para demo.
 
     // Toggle modo oscuro y login (simulación)
     function setupUI(){
@@ -419,6 +506,10 @@
 
         syncThemeState();
     }
+
+    // setupUI()
+    // - Propósito: controlar comportamiento visual general (modo oscuro, logo) y guardar preferencia en localStorage.
+    // - No requiere autenticación; solo manipula la clase `dark` en `body`.
 
     // Scroll spy ligero para resaltar la sección activa en la navegación
     function setupNavScrollHighlight(){
@@ -474,6 +565,10 @@
         window.addEventListener('resize', updateActive);
     }
 
+    // setupNavScrollHighlight()
+    // - Propósito: resaltar el enlace de navegación correspondiente a la sección visible en pantalla.
+    // - Usa offset para compensar headers fijos y recalcula en `scroll` y `resize`.
+
     // Cargar tratamientos desde el backend y luego inicializar la app
     async function loadTratamientosAndInit(){
         try{
@@ -502,6 +597,9 @@
         setupNavScrollHighlight();
     }
 
+    // Punto de entrada
+    // - Se espera que el DOM esté cargado antes de inicializar: se llama a `loadTratamientosAndInit()`.
+    // - `loadTratamientosAndInit()` realiza fetch a `/api/tratamientos/`, crea la UI y enlaza eventos.
     document.addEventListener('DOMContentLoaded', loadTratamientosAndInit);
 
 })();

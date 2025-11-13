@@ -1,18 +1,23 @@
 {% extends 'base.html' %}
-{% comment %} Formulario para reprogramar la fecha/hora de una cita existente.
-    La plantilla recibe `cita` con los datos del paciente y muestra el campo
-    `fecha_cita` para editar.
-{% endcomment %}
+<!--
+    Plantilla: `citas_editar.html`.
+    Notas educativas:
+    - Recibe en el contexto un objeto `cita` con los datos a mostrar.
+    - El campo `fecha_cita` se muestra con formato y se envía al backend para actualizar.
+    - `{{ cita.fecha_cita|date:'Y-m-d\\TH:i' }}` es una forma de formatear
+        fechas para `datetime-local` en HTML.
+    - Revisa la vista `citas_editar` para ver la validación y la lógica de guardado.
+-->
 {% block title %}Reprogramar cita{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Ajustar horario</small>
         <h1 class="mb-0">Reprogramar cita</h1>
     </div>
     <a href="{% url 'citas_listar' %}" class="btn btn-outline-secondary">Volver</a>
-</div>
+</header>
 
 <div class="card mb-4">
     <div class="card-body">

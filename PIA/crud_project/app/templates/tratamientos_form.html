@@ -1,18 +1,23 @@
 {% extends 'base.html' %}
-{% comment %} Formulario para crear/editar un tratamiento.
-    Si se pasa `tratamiento` en el contexto la plantilla funciona en modo
-    edición (rellena los campos). Campos: nombre, precio, descripcion.
-{% endcomment %}
+<!--
+    Plantilla: `tratamientos_form.html` (crear/editar tratamiento).
+    Notas educativas:
+    - Si la vista añade `tratamiento` al contexto, la plantilla muestra los
+        valores actuales para edición (`value="{{ tratamiento.nombre }}"`).
+    - Para crear/editar se usa el mismo formulario; la vista decide si crea
+        o actualiza según la presencia del objeto.
+    - Campos: `nombre`, `precio`, `descripcion`.
+-->
 {% block title %}{% if tratamiento %}Editar tratamiento{% else %}Nuevo tratamiento{% endif %}{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Catálogo clínico</small>
         <h1 class="mb-0">{% if tratamiento %}Editar tratamiento{% else %}Nuevo tratamiento{% endif %}</h1>
     </div>
     <a class="btn btn-outline-secondary" href="{% url 'tratamientos_listar' %}">Volver</a>
-</div>
+</header>
 
 <div class="card form-card">
     <div class="card-body">

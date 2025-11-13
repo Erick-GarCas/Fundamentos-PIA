@@ -1,17 +1,22 @@
 {% extends 'base.html' %}
-{% comment %} Listado de tratamientos del sistema. Recibe `tratamientos` en
-    el contexto (QuerySet) y renderiza acciones para editar/eliminar.
-{% endcomment %}
+<!--
+    Plantilla: `tratamientos_list.html` (lista de tratamientos).
+    Notas educativas:
+    - Espera `tratamientos` en el contexto (QuerySet). Se usa `{% for t in tratamientos %}`
+        para renderizar filas de la tabla.
+    - Los botones de eliminar usan formularios POST con `{% csrf_token %}`.
+    - Revisar la vista que provee `tratamientos` para entender paginación/orden.
+-->
 {% block title %}Tratamientos{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Catálogo clínico</small>
         <h1 class="mb-0">Tratamientos</h1>
     </div>
     <a href="{% url 'tratamientos_crear' %}" class="btn btn-primary">Nuevo tratamiento</a>
-</div>
+</header>
 
 <div class="card admin-table">
     <div class="card-body">

@@ -1,39 +1,98 @@
+/*
+ Manual de usuario: `style.css`
+
+ Resumen general:
+ - Este archivo contiene las reglas CSS principales para la interfaz pública y
+     de administración de la aplicación. Gestiona tipografías, paleta de colores,
+     componentes reutilizables (cards, formularios, sliders), modos (claro/oscuro),
+     diseño responsivo y estilos específicos para secciones: hero, galería,
+     testimonios, cotizador, tratamientos, navbar, footer y páginas de autenticación.
+
+ Estructura y secciones principales (índice rápido):
+ 1) Variables y tipografías (ROOT, fonts, headings)
+ 2) Componentes globales (cards, botones, forms)
+ 3) Secciones públicas: hero, nosotros, tratamientos, servicios, galería, testimonios
+ 4) Slider y cotizador (estilos y utilidades relacionadas con la lógica JS)
+ 5) Formularios y validaciones visuales (inputs, alerts, checkbox-grid)
+ 6) Header / navegación / acciones (logo, nav, login button, toggle dark)
+ 7) Footer, contacto y mapa
+ 8) Modos: `body.dark` - sobrescribe colores para dark mode
+ 9) Admin shell y componentes de dashboard (clases `admin-*`)
+10) Layouts de autenticación (`auth-shell`, `auth-side`, `auth-card`)
+11) Media queries y adaptaciones responsive (breakpoints 900px, 768px, 520px, etc.)
+
+ Convenciones y notas de uso:
+ - Prefijos y nombres: las clases están pensadas para que sean semánticas
+     (`.feature-card`, `.cotizacion-row`, `#tratamientos`, `.checkbox-grid`). Respeta
+     estas convenciones al añadir nuevos estilos para mantener coherencia.
+ - Dark mode: para activar el modo oscuro se aplica la clase `body.dark`. El CSS
+     contiene reglas específicas que fuerzan colores en ese modo para garantizar
+     legibilidad. Si añades componentes nuevos, recuerda añadir sus variantes
+     bajo `body.dark ...` cuando sea necesario.
+ - Variables: se usan variables CSS nativas mínimas (ej. `--brand`, `--brand-dark`)
+     definidas en `:root`. Para cambios de marca aconsejable centralizar colores aquí.
+ - Accesibilidad: muchos controles usan alto contraste y `:focus` visible. Respeta
+     interacciones de teclado y evita ocultar outlines sin alternativa visible.
+ - Rendimiento: evita reglas excesivamente específicas y anidar selectores largos;
+     prefiere clases utilitarias cuando puedas reutilizar estilos.
+
+ Recomendaciones para desarrolladores:
+ - Validaciones visuales y de UX (ej. phone/email/fecha) deben realizarse también
+     en el servidor. Este CSS solo controla la apariencia.
+ - Si necesitas variables complejas o theming avanzado, conviene migrar a SASS/SCSS
+     y exponer un conjunto de variables globales (colores, radios, sombras, spacings).
+ - Para nuevas secciones, copia la estructura semántica de clases y añade la
+     variante `body.dark` si aplica.
+
+ Cómo leer este archivo:
+ - Busca la sección deseada por el nombre de clase/id (por ejemplo `#cotizacion`,
+     `#tratamientos`, `.hero`, `.auth-shell`) — los comentarios inline describen
+     la intención de bloques particulares.
+ - El archivo contiene comentarios explicativos junto a reglas críticas.
+
+ Notas finales:
+ - Este comentario pretende actuar como manual de usuario/guía rápida. No
+     modifica ninguna regla existente: solo aporta documentación en la cabecera.
+ - Si quieres que documente sección a sección (comentarios más extensos dentro
+     de cada bloque), puedo insertar comentarios detallados antes de bloques
+     específicos (ej. hero, sliders, checkbox-grid). Indica qué prefieres.
+*/
+
 /* Base: tipografía y colores principales
-   - Define la fuente principal usada en toda la página
-   - Fondo claro y color de texto por defecto */
+     - Define la fuente principal usada en toda la página
+     - Fondo claro y color de texto por defecto */
 html{
     scroll-behavior: smooth;
 }
 
 body{
-    /* Use Poppins for body text (falls back to system fonts) */
+    /* Usa 'Poppins' para el texto del cuerpo (si no está disponible, usa fuentes del sistema) */
     font-family: 'Poppins', Arial, Helvetica, sans-serif;
     display: block;
     margin: 0;
     background-color: #f4f4f4;
     color: #333;
-    /* Removed top padding so header/navbar can sit flush at the top as requested */
+    /* Se eliminó el padding superior para que el header/navbar quede pegado al tope */
     padding-top: 0;
 }
 
-/* Headings use Montserrat */
+/* Encabezados usan Montserrat */
 h1, h2, h3, h4, h5, h6, .display-5 {
     font-family: 'Montserrat', Arial, Helvetica, sans-serif;
     margin: 0;
 }
 
-/* Brand color variable (used across the site) */
+/* Variable de color de la marca (usada en todo el sitio) */
 :root{ --brand: #0d6efd; --brand-dark: #012a4a; }
 
-/* Improve 'Nosotros' section spacing and make it more llamativo */
+/* Mejorar el espaciado de la sección 'Nosotros' y hacerla más llamativa */
 #nosotros{
     background: #fffefb;
     padding: 20px 18px; /* un poco más de padding para respirar */
     border-radius: 10px;
     color: #333;
 }
-
-/* Reduce gap between the section title and the content row (override Bootstrap mt-3) */
+/* Reducir el espacio entre el título de la sección y la fila de contenido (anula Bootstrap mt-3) */
 #nosotros > .row{ margin-top: 8px; }
 
 #nosotros h2{
@@ -45,7 +104,7 @@ h1, h2, h3, h4, h5, h6, .display-5 {
     position: relative;
 }
 
-/* Decorative underline/marker under the title */
+/* Subrayado/marcador decorativo debajo del título */
 #nosotros h2::after{
     content: "";
     display: block;
@@ -92,7 +151,7 @@ h1, h2, h3, h4, h5, h6, .display-5 {
     font-size: 1.05rem;
 }
 
-/* Cotizador specific styles */
+/* Estilos específicos del cotizador */
 #cotizacion .card{
     border-radius: 10px;
     box-shadow: 0 10px 28px rgba(2,6,23,0.06);
@@ -110,7 +169,7 @@ h1, h2, h3, h4, h5, h6, .display-5 {
     font-weight: 700;
 }
 
-/* Result box style */
+/* Estilo del recuadro de resultado */
 #resultado-cotizacion{
     min-height: 120px;
     display: flex;
@@ -122,7 +181,7 @@ h1, h2, h3, h4, h5, h6, .display-5 {
     margin: 0 0 6px 0;
 }
 
-/* Make the left form and right result look balanced */
+/* Equilibrar visualmente el formulario izquierdo y el recuadro de resultado derecho */
 .cotizacion-row{ display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
 .cotizacion-left{ flex: 1 1 520px; }
 .cotizacion-right{ flex: 0 0 360px; }
@@ -267,13 +326,13 @@ body.dark input[type="email"]{
 /* Default: texto oscuro en modo claro. En modo oscuro se sobreescribe con `body.dark`. */
 #nosotros p:first-of-type{
     font-size: 1.06rem;
-    color: #111111; /* dark text for light mode */
+    color: #111111; /* texto oscuro para modo claro */
     line-height: 1.7;
     margin-top: 4px;
     margin-bottom: 12px;
 }
 
-/* Make the image pop a bit more */
+/* Hacer que la imagen destaque un poco más */
 .img-nosotros{
     width: 100%;
     max-width: 420px;
@@ -803,7 +862,7 @@ section{
     box-shadow: 0 18px 40px rgba(2,6,23,0.12);
 }
 
-/* Entrance animation */
+/* Animación de entrada */
 @keyframes fadeInUp{
     from{ opacity: 0; transform: translateY(10px); }
     to{ opacity: 1; transform: translateY(0); }
@@ -813,7 +872,7 @@ section{
     animation: fadeInUp 420ms ease both;
 }
 
-/* Staggered entrance: small delays for each card */
+/* Entrada escalonada: pequeños retrasos para cada tarjeta */
 .feature-grid > .col-md-4:nth-child(1) .feature-card{ animation-delay: 0ms; }
 .feature-grid > .col-md-4:nth-child(2) .feature-card{ animation-delay: 80ms; }
 .feature-grid > .col-md-4:nth-child(3) .feature-card{ animation-delay: 160ms; }
@@ -945,10 +1004,10 @@ button{
 
 /* Galería */
 /* Galería
-   NOTE: `#galeria-grid` is used as the .carousel-inner in the HTML. Previously it
-   was forced to `display: grid`, which breaks the Bootstrap carousel layout and
-   produced narrow / sliced images. Remove the grid rule and keep portable
-   gallery image styles. */
+    NOTA: `#galeria-grid` se usa como `.carousel-inner` en el HTML. Anteriormente se
+    forzaba `display: grid`, lo que rompía el layout del carrusel de Bootstrap y
+    producía imágenes estrechas o recortadas. Se eliminó la regla `grid` para
+    mantener estilos de galería compatibles con el carrusel. */
 
 /* Miniaturas: mantener proporción con object-fit (usado si en el futuro se
    usa una vista de miniaturas estática). */
@@ -972,7 +1031,7 @@ button{
     .gallery-img{ height: 160px; }
 }
 
-/* Carousel-specific image sizing so photos are visible and not thin slices */
+/* Ajuste de tamaño de las imágenes del carrusel para que las fotos sean visibles y no aparezcan recortadas */
 .carousel .gallery-img{
     width: 100%;
     height: 420px;
@@ -984,10 +1043,10 @@ button{
     .carousel .gallery-img{ height: 220px; }
 }
 
-/* Ensure carousel inner doesn't overflow and keep Bootstrap's slide behavior intact */
+/* Asegura que el interior del carrusel no se desborde y mantiene el comportamiento de deslizamiento (slide) de Bootstrap */
 .carousel-inner{ overflow: hidden; }
 
-/* Make indicators more visible (long pills) */
+/* Hacer los indicadores más visibles (píldoras alargadas) */
 .carousel-indicators button{
     width: 34px;
     height: 6px;
@@ -1183,15 +1242,15 @@ footer{
     padding: 0 18px;
 }
 
-/* Optional fallback: if you prefer inserting an <img> inside the .hero
-     (instead of background-image), use an element like:
+/* Alternativa opcional: si prefieres insertar un <img> dentro de `.hero`
+     (en lugar de usar `background-image`), puedes usar un elemento como el siguiente:
 
      <div class="hero">
          <img src="assets/img/instalaciones3.png" class="hero-bg" alt="instalaciones">
          <div class="hero-text">...</div>
      </div>
 
-     This CSS will keep the same dimensions and cover behavior. */
+     Este CSS mantendrá las mismas dimensiones y el comportamiento `cover`. */
 .hero .hero-bg{
         position: absolute;
         inset: 0;
@@ -1199,8 +1258,8 @@ footer{
         height: 100%;
         object-fit: cover;
         object-position: center center;
-        z-index: 0; /* below overlay and text */
-        pointer-events: none; /* ensure hero content is interactive */
+        z-index: 0; /* debajo del overlay y del texto */
+        pointer-events: none; /* evita que la imagen capture eventos del puntero y asegura que el contenido del hero sea interactivo */
 }
 
 .hero-media video{
@@ -1282,8 +1341,8 @@ body.dark .hero .hero-cta:hover{
 
 /* Dark mode refinado: colores más suaves, contraste consistente y menos glow */
 body.dark{
-    background-color: #071022; /* slightly bluish near-black for depth */
-    /* Force white text in dark mode for all elements to match request */
+    background-color: #071022; /* ligeramente azulado casi negro para dar profundidad */
+    /* Forzar texto blanco en modo oscuro para todos los elementos (consistencia de legibilidad) */
     color: #ffffff !important;
 }
 
@@ -1292,9 +1351,9 @@ body.dark .site-header{
     box-shadow: 0 6px 20px rgba(0,0,0,0.7);
 }
 
-/* Strong overrides to ensure legibility in dark mode:
-   - Force text to white
-   - Make table backgrounds dark so white text is visible
+/* Reglas fuertes para asegurar la legibilidad en modo oscuro:
+    - Forzar texto en blanco
+    - Hacer fondos de tablas oscuros para que el texto blanco sea legible
 */
 body.dark, body.dark *{
     color: #ffffff !important;
@@ -1390,7 +1449,7 @@ body.dark ::placeholder{
 
 /* Checkbox grid: adapt to dark mode so it doesn't stay a bright card inside dark background */
 body.dark .checkbox-grid{
-    /* Slight frosted card to separate it from the near-black page background */
+    /* Ligera apariencia 'frosted' para separar este bloque del fondo casi negro de la página */
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
     border: 1px solid rgba(255,255,255,0.06);
     color: #e6f3ff;
@@ -1428,7 +1487,7 @@ body.dark .checkbox-grid .form-check small{
 
 body.dark .checkbox-grid input[type="checkbox"]{
     filter: none;
-    accent-color: #9fd1ff; /* tint the checkbox to match the theme */
+    accent-color: #9fd1ff; /* colorear la casilla para que coincida con el tema */
     width: 18px;
     height: 18px;
 }
@@ -1737,7 +1796,7 @@ body.dark .admin-navbar .btn-outline-danger:hover{
         flex-direction: column;
         align-items: flex-start;
     }
-    /* Remove forced top padding so navbar sits at the very top (no empty gap) */
+    /* Eliminar padding superior forzado para que la navbar quede en la parte superior (sin espacio vacío) */
 }
 
 
@@ -2248,9 +2307,9 @@ body.dark .accordion-body{
     color: #ffffff;
 }
 
-/* Badges and pills: ensure visibility in dark mode
-   - bg-light badges become subtle dark pills with white text
-   - status "subtle" badges keep a tinted background and readable colored text
+/* Insignias y píldoras: asegurar visibilidad en modo oscuro
+    - las badges con `bg-light` se convierten en píldoras oscuras sutiles con texto blanco
+    - las badges de estado "subtle" mantienen un fondo tintado y texto de color legible
 */
 body.dark .badge.bg-light,
 body.dark .badge.border{
@@ -2260,17 +2319,17 @@ body.dark .badge.border{
 }
 
 body.dark .badge.bg-warning-subtle{
-    background: rgba(245,158,11,0.12) !important; /* amber subtle */
+    background: rgba(245,158,11,0.12) !important; /* ámbar sutil */
     color: #f59e0b !important;
     border-color: rgba(245,158,11,0.18) !important;
 }
 body.dark .badge.bg-success-subtle{
-    background: rgba(16,185,129,0.10) !important; /* green subtle */
+    background: rgba(16,185,129,0.10) !important; /* verde sutil */
     color: #10b981 !important;
     border-color: rgba(16,185,129,0.14) !important;
 }
 body.dark .badge.bg-primary-subtle{
-    background: rgba(59,130,246,0.10) !important; /* blue subtle */
+    background: rgba(59,130,246,0.10) !important; /* azul sutil */
     color: #3b82f6 !important;
     border-color: rgba(59,130,246,0.14) !important;
 }
@@ -2328,10 +2387,10 @@ body.dark td .badge{
     font-weight: 700;
 }
 
-/* Hide header-based accessibility controls on the landing page when floating widget is present */
+/* Ocultar los controles de accesibilidad basados en el header en la página de inicio cuando el widget flotante está presente */
 .landing .accessibility-controls{ display: none !important; }
 
-/* Collapsed behavior on very small screens: show only the circular toggle, expand controls when .expanded is set */
+/* Comportamiento colapsado en pantallas muy pequeñas: mostrar solo el toggle circular, ampliar los controles cuando se aplica la clase .expanded */
 @media (max-width: 520px){
     .floating-accessibility{ right: 12px; bottom: 12px; }
     .floating-accessibility .floating-controls{ display: none; }

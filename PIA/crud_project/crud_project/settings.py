@@ -1,11 +1,7 @@
-"""
-Configuración de Django para el proyecto `crud_project`.
-
-Este archivo contiene ajustes generados por `startproject` y pequeñas
-personalizaciones (por ejemplo, `app` en INSTALLED_APPS y un
-context processor personalizado). Los comentarios aquí explican las
-secciones relevantes de forma concisa.
-"""
+# Configuración de Django para el proyecto `crud_project`.
+#
+# Este archivo contiene los ajustes principales usados por el proyecto.
+# Cada sección siguiente tiene una breve descripción de para qué sirve.
 
 from pathlib import Path
 
@@ -14,16 +10,14 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# ------------------------- Seguridad / despliegue -------------------------
-# Importante: nunca dejes el SECRET_KEY en repositorio público en
-# producción; aquí se mantiene para desarrollo local.
+# ------------------------- Seguridad -------------------------
+# Clave secreta del proyecto (usada por criptografía interna).
 SECRET_KEY = 'django-insecure-=_7lp1q@d2jh*+r+v0l(z&0%dax)@twy)0drh&j08)w5w5bm8@'
 
-# DEBUG True permite recargas automáticas y páginas de error detalladas.
-# No debe estar activo en producción.
+# DEBUG True habilita recargas automáticas y páginas de error detalladas.
 DEBUG = True
 
-# Hosts permitidos por el servidor. En producción añade tu dominio.
+# Hosts permitidos por el servidor (lista de dominios o IPs).
 ALLOWED_HOSTS = []
 
 
@@ -80,8 +74,7 @@ WSGI_APPLICATION = 'crud_project.wsgi.application'  # Punto de entrada WSGI
 
 
 # ------------------------- Base de datos --------------------------------
-# Aquí se usa sqlite3 para desarrollo por simplicidad; en producción
-# suele usarse PostgreSQL, MySQL, etc.
+# Base de datos: sqlite3 usada para desarrollo por simplicidad.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

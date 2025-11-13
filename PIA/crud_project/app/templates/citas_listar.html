@@ -1,12 +1,19 @@
 {% extends 'base.html' %}
-{% comment %} Lista de citas para el módulo de agenda.
-    Variables esperadas en contexto: `citas`, `is_admin`, `is_employee`, `can_view_citas`.
-    Los botones de acción dependen de los flags de permiso.
-{% endcomment %}
+<!--
+    Plantilla: `citas_listar.html` (lista de citas).
+    Notas:
+    - Espera `citas` en el contexto: suele ser un QuerySet de objetos `CitaDental`.
+    - Uso de `{% for c in citas %} ... {% empty %} ... {% endfor %}` para iterar
+        y mostrar un mensaje si no hay elementos.
+    - Las banderas `is_admin`, `is_employee`, `can_view_citas` controlan la visibilidad
+        de botones y acciones; vienen del backend (views o context processors).
+    - Los botones de acción envían formularios POST con `{% csrf_token %}` cuando
+        realizan cambios (eliminar). Esto es importante para evitar CSRF.
+-->
 {% block title %}Citas{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Agenda de pacientes</small>
         <h1 class="mb-0">Citas</h1>
@@ -14,7 +21,7 @@
     {% if is_admin %}
     <a class="btn btn-primary" href="{% url 'citas_crear' %}">Crear cita</a>
     {% endif %}
-</div>
+</header>
 
 <div class="card admin-table">
     <div class="card-body">

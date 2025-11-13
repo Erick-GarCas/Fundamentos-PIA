@@ -1,17 +1,23 @@
 {% extends 'base.html' %}
-{% comment %} Formulario para editar usuarios y sus permisos. Recibe `user_obj`,
-   `role_flags`, `perm_flags` y `superuser_flag` en el contexto.
-{% endcomment %}
+<!--
+    Plantilla: `users_edit.html` (editar usuario y permisos).
+    Notas educativas:
+    - Recibe `user_obj` en el contexto con los datos actuales del usuario.
+    - Los checkboxes (`role_flags`, `perm_flags`) se usan para mostrar/editar
+        las pertenencias a grupos y permisos.
+    - Si el campo contraseña se deja vacío, la vista puede decidir no cambiar
+        la contraseña existente; revisa `views.py` para ver esa lógica.
+-->
 {% block title %}Editar usuario{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Actualizar acceso</small>
         <h1 class="mb-0">Editar usuario</h1>
     </div>
     <a class="btn btn-outline-secondary" href="{% url 'usuarios_listar' %}">Volver</a>
-</div>
+</header>
 
 <div class="card form-card">
     <div class="card-body">

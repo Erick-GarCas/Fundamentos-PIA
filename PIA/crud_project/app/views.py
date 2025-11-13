@@ -29,9 +29,19 @@ from django.utils.dateparse import parse_datetime
 
 from .models import CitaDental, Reservacion, Tratamiento, Usuario
 
+# ======= Resumen de dependencias y modelos =======
+# - `CitaDental`, `Reservacion`, `Tratamiento`, `Usuario`: modelos usados en las vistas.
+# - Utilizamos utilidades de Django: `messages`, `auth`, `decorators`, `transaction`.
+# - Las vistas devuelven `render`, `redirect` o `JsonResponse` según corresponda.
+
 
 def _is_past_day(dt_obj):
 	"""Devuelve True si la fecha dada corresponde a un día anterior al actual."""
+
+# Helper - Validación de fecha
+# - Entrada: `dt_obj` (datetime/None).
+# - Salida: True si la fecha pertenece a un día anterior al día actual.
+# - Uso frecuente para evitar agendar o reprogramar eventos en el pasado.
 	if dt_obj is None:
 		return True
 	if timezone.is_aware(dt_obj):
@@ -44,6 +54,11 @@ def _is_past_day(dt_obj):
 def index(request):
 	"""Renderiza la landing page (index.html) ubicada en `app/templates/index.html`."""
 	return render(request, 'index.html')
+
+# Public view - Página principal
+# - Método: GET
+# - Template: `index.html`
+# - No requiere autenticación.
 
 
 def solicitar_cita(request):
@@ -65,6 +80,12 @@ def solicitar_cita(request):
 	if not nombre or not telefono or not fecha_val or not tratamientos_ids:
 		messages.error(request, 'Faltan datos requeridos. Por favor complete nombre, teléfono, fecha y al menos un tratamiento.')
 		return redirect('home')
+
+# Vista pública para solicitar cita
+# - Recibe datos por POST provenientes del formulario público.
+# - Valida campos mínimos, formato de correo y fecha futura.
+# - Evita duplicados por hora: si ya hay una cita a la misma hora devuelve error.
+# - Crea un registro `CitaDental` y asocia hasta 2 `Tratamiento`.
 
 	if len(tratamientos_ids) > 2:
 		messages.error(request, 'Sólo se permiten hasta 2 tratamientos por solicitud.')
@@ -140,6 +161,10 @@ def tratamientos_json(request):
 		})
 	return JsonResponse(data, safe=False)
 
+# API simple para listar tratamientos
+# - Uso desde JavaScript: consume un arreglo JSON con detalles (id, nombre, descripcion, precio).
+# - No requiere autenticación.
+
 
 def signup(request):
 	"""Registro simple de usuario. Crea un User y lo autentica en la sesión.
@@ -190,6 +215,11 @@ def signup(request):
 	# GET -> render formulario de registro
 	return render(request, 'signup.html')
 
+# Registro de usuario
+# - POST: valida datos, evita duplicados y crea dos registros: `User` y `Usuario` (espejo).
+# - Se usa `transaction.atomic()` para que la creación sea atómica.
+# - Mensajes al usuario mediante `messages` y redirección a `login`.
+
 
 def login_view(request):
 	"""Vista de login personalizada para usar la plantilla `login.html`."""
@@ -204,6 +234,11 @@ def login_view(request):
 		messages.error(request, 'Credenciales inválidas. Intente de nuevo.')
 	next_url = request.GET.get('next', '')
 	return render(request, 'login.html', {'next': next_url})
+
+# Login personalizado
+# - POST: intenta autenticar y redirige a `next` o a `listar`.
+# - GET: muestra el formulario de login y puede recibir `next` en querystring.
+# - Usa `messages` para feedback en credenciales inválidas.
 
 
 @login_required
@@ -233,6 +268,11 @@ def listar(request):
 		'is_employee': is_employee,
 	})
 
+# Dashboard administrativo / resumen
+# - Requiere login.
+# - Muestra contadores y últimas citas para dar una vista rápida al usuario autenticado.
+# - Calcula flags `is_admin` y `is_employee` para condicionar la UI.
+
 
 def group_required(*group_names):
 	"""Decorator to require user to be member of at least one group."""
@@ -249,6 +289,11 @@ def group_required(*group_names):
 		return _wrapped
 	return decorator
 
+# Decorador `group_required`
+# - Usa grupos de Django para controlar acceso (ej: 'Administrador', 'Empleado').
+# - Si el usuario es `superuser` se permite el acceso automáticamente.
+# - Si no está autenticado redirige a `login`, si no pertenece a los grupos retorna 403.
+
 
 def ensure_default_groups():
 	"""Garantiza que existan los grupos base y permisos de módulos."""
@@ -257,6 +302,10 @@ def ensure_default_groups():
 			Group.objects.get_or_create(name=name)
 	except Exception:
 		pass
+
+# Inicialización de grupos por defecto
+# - Se puede llamar antes de mostrar listas de usuarios o al iniciar ciertos workflows.
+# - Silenciosamente ignora errores para evitar romper vistas por problemas en el ORM.
 
 
 def assign_user_groups(user_obj, role_admin=False, role_employee=False, perm_citas=False, perm_tratamientos=False):
@@ -278,12 +327,21 @@ def assign_user_groups(user_obj, role_admin=False, role_employee=False, perm_cit
 	if perm_tratamientos:
 		user_obj.groups.add(group_map['tratamientos'])
 
+# Función utilitaria para asignar roles y permisos a un `User`:
+# - `role_admin`, `role_employee`: roles de alto nivel.
+# - `perm_citas`, `perm_tratamientos`: permisos por módulo.
+# - Primero limpia los grupos existentes y luego asigna los seleccionados.
+
 
 @login_required
 @group_required('Administrador', 'Empleado', 'Permiso Citas')
 def citas_listar(request):
 	qs = CitaDental.objects.all().prefetch_related('tratamientos').order_by('-fecha_cita')
 	return render(request, 'citas_listar.html', {'citas': qs})
+
+# CRUD Citas - Listar
+# - Requiere pertenecer a al menos uno de los grupos listados en el decorador.
+# - `prefetch_related` optimiza la carga de tratamientos relacionados.
 
 
 @login_required
@@ -320,6 +378,11 @@ def citas_crear(request):
 		return redirect('citas_listar')
 	return render(request, 'citas_crear.html')
 
+# CRUD Citas - Crear
+# - Solo administradores pueden crear desde el panel.
+# - Valida campos obligatorios y que la fecha no sea pasada.
+# - Muestra mensajes de éxito/error y redirige a la lista.
+
 
 @login_required
 @group_required('Administrador', 'Empleado')
@@ -343,6 +406,10 @@ def citas_editar(request, id):
 		return redirect('citas_listar')
 	return render(request, 'citas_editar.html', {'cita': cita})
 
+# CRUD Citas - Editar
+# - Admins y empleados pueden reprogramar la fecha de una cita.
+# - Evita poner una fecha en el pasado y guarda únicamente el campo `fecha_cita`.
+
 
 @login_required
 @group_required('Administrador', 'Empleado')
@@ -354,6 +421,10 @@ def citas_eliminar(request, id):
 	messages.success(request, 'Cita eliminada')
 	return redirect('citas_listar')
 
+# CRUD Citas - Eliminar
+# - Solo POST para seguridad (evita borrar por GET accidentalmente).
+# - Muestra feedback mediante `messages`.
+
 
 @login_required
 @group_required('Administrador', 'Empleado', 'Permiso Citas')
@@ -364,12 +435,20 @@ def citas_marcar_listo(request, id):
 	messages.success(request, 'Cita marcada como atendida')
 	return redirect('citas_listar')
 
+# Acción: marcar cita como atendida
+# - Cambia el estatus interno y redirige a la lista.
+# - Útil para el flujo de trabajo del personal.
+
 
 @login_required
 @group_required('Administrador', 'Permiso Tratamientos')
 def tratamientos_listar(request):
 	tratamientos = Tratamiento.objects.all().order_by('nombre')
 	return render(request, 'tratamientos_list.html', {'tratamientos': tratamientos})
+
+# CRUD Tratamientos - Listar
+# - Requiere permisos específicos de tratamiento o ser Administrador.
+# - Usado por el personal para ver y seleccionar tratamientos.
 
 
 @login_required
@@ -393,6 +472,10 @@ def tratamientos_crear(request):
 		messages.success(request, 'Tratamiento creado correctamente')
 		return redirect('tratamientos_listar')
 	return render(request, 'tratamientos_form.html')
+
+# CRUD Tratamientos - Crear
+# - Valida que nombre y precio existan y que el precio sea convertible a Decimal.
+# - Guarda el objeto `Tratamiento` y redirige a la lista con mensaje de éxito.
 
 
 @login_required
@@ -421,6 +504,10 @@ def tratamientos_editar(request, id):
 		return redirect('tratamientos_listar')
 	return render(request, 'tratamientos_form.html', {'tratamiento': tratamiento})
 
+# CRUD Tratamientos - Editar
+# - Recupera el objeto, valida los datos y actualiza los campos permitidos.
+# - Mantiene UI unificada reutilizando `tratamientos_form.html`.
+
 
 @login_required
 @group_required('Administrador', 'Permiso Tratamientos')
@@ -432,12 +519,19 @@ def tratamientos_eliminar(request, id):
 	messages.success(request, 'Tratamiento eliminado')
 	return redirect('tratamientos_listar')
 
+# CRUD Tratamientos - Eliminar
+# - Solo por POST; elimina el registro y muestra mensaje de confirmación.
+
 
 @login_required
 @group_required('Administrador', 'Empleado')
 def reservaciones_listar(request):
 	qs = Reservacion.objects.all().order_by('-fecha_reservacion')
 	return render(request, 'reservaciones_listar.html', {'reservaciones': qs})
+
+# CRUD Reservaciones - Listar
+# - Muestra las reservaciones ordenadas por fecha.
+# - Acceso restringido según roles.
 
 
 @login_required
@@ -465,6 +559,10 @@ def reservaciones_crear(request):
 		return redirect('reservaciones_listar')
 	return render(request, 'reservaciones_form.html')
 
+# CRUD Reservaciones - Crear
+# - Solo administradores: crea una reservación con nombre, fecha, teléfono y asistentes.
+# - Convierte `asistentes` a entero antes de guardar.
+
 
 @login_required
 @group_required('Administrador')
@@ -483,6 +581,10 @@ def reservaciones_editar(request, id):
 		return redirect('reservaciones_listar')
 	return render(request, 'reservaciones_form.html', {'reservacion': r})
 
+# CRUD Reservaciones - Editar
+# - Actualiza campos opcionales si se envían en POST, preservando valores por defecto.
+# - Redirige a la lista y muestra mensaje de éxito.
+
 
 @login_required
 @group_required('Administrador')
@@ -494,6 +596,9 @@ def reservaciones_eliminar(request, id):
 	messages.success(request, 'Reservación eliminada')
 	return redirect('reservaciones_listar')
 
+# CRUD Reservaciones - Eliminar
+# - Solo POST; elimina el registro identificado por `id`.
+
 
 @login_required
 @group_required('Administrador', 'Empleado')
@@ -504,6 +609,9 @@ def reservaciones_marcar_listo(request, id):
 	messages.success(request, 'Reservación marcada como lista')
 	return redirect('reservaciones_listar')
 
+# Acción: marcar reservación como lista
+# - Útil para indicar que la reservación ya fue atendida/preparada.
+
 
 @login_required
 @group_required('Administrador')
@@ -511,6 +619,10 @@ def usuarios_listar(request):
 	ensure_default_groups()
 	qs = User.objects.all().order_by('username')
 	return render(request, 'users_list.html', {'usuarios': qs})
+
+# Gestión de Usuarios - Listar
+# - Inicializa grupos (si faltan) y lista todos los `User`.
+# - Solo accesible por Administradores.
 
 
 @login_required
@@ -549,6 +661,11 @@ def usuarios_crear(request):
 		'perm_flags': {'citas': False, 'tratamientos': False},
 		'superuser_flag': False,
 	})
+
+# Gestión de Usuarios - Crear
+# - Permite crear un usuario administrativo o con permisos específicos.
+# - Asigna flags y grupos via `assign_user_groups`.
+# - Marca `is_staff` si el usuario tiene cualquier rol o permiso relevante.
 
 
 @login_required
@@ -594,6 +711,10 @@ def usuarios_editar(request, id):
 		'superuser_flag': user_obj.is_superuser,
 	})
 
+# Gestión de Usuarios - Editar
+# - Actualiza username, email, password y flags de rol/permiso.
+# - No permite cambiar la propia eliminación desde esta vista (ver `usuarios_eliminar`).
+
 
 @login_required
 @group_required('Administrador')
@@ -608,6 +729,10 @@ def usuarios_eliminar(request, id):
 	messages.success(request, 'Usuario eliminado.')
 	return redirect('usuarios_listar')
 
+# Gestión de Usuarios - Eliminar
+# - Previene que un usuario se elimine a sí mismo.
+# - Solo POST para prevenir borrados accidentales.
+
 
 def crear(request):
 	"""Vista placeholder para crear un contacto."""
@@ -615,6 +740,9 @@ def crear(request):
 		messages.success(request, 'Contacto creado correctamente.')
 		return redirect('listar')
 	return render(request, 'crear.html')
+
+# Vistas placeholder: `crear`, `editar`, `eliminar`
+# - Plantillas de ejemplo usados por la UI. Conservadas para compatibilidad.
 
 
 def editar(request, id):

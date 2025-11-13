@@ -1,19 +1,24 @@
 {% extends 'base.html' %}
-{% comment %} Página principal del panel (dashboard).
-    Muestra KPIs y las últimas citas. Variables: count_citas, count_tratamientos,
-    recent_citas, is_admin, is_employee.
-{% endcomment %}
+<!--
+    Plantilla: `listar.html` (dashboard del panel administrativo).
+    Notas educativas:
+    - Extiende `base.html` y rellena bloques como `{% block title %}` y `{% block content %}`.
+    - Variables esperadas: `count_citas`, `count_tratamientos`, `recent_citas`,
+        `is_admin`, `is_employee` — estas vienen desde la vista que renderiza el dashboard.
+    - Las tarjetas KPI muestran datos pasados por contexto; revisar `views.listar` para ver
+        cómo se calculan.
+-->
 
 {% block title %}Módulo principal{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Resumen general</small>
         <h1 class="mb-0">Módulo principal</h1>
     </div>
     <!-- Accessibility buttons removed from module header (now live in navbar) -->
-</div>
+</header>
 
 <div class="row g-4 mb-4">
     <div class="col-md-6 col-xl-4">

@@ -1,17 +1,22 @@
 {% extends 'base.html' %}
-{% comment %} Gestión de usuarios y roles. Página accesible solo a admins
-    (controlada desde la vista). Variables: usuarios (QuerySet de User).
-{% endcomment %}
+<!--
+    Plantilla: `users_list.html` (listado de usuarios y roles).
+    Notas educativas:
+    - Accesible normalmente solo para administradores (la vista comprueba permisos).
+    - `usuarios` es un QuerySet que se itera para mostrar filas en la tabla.
+    - Las acciones que modifican datos (eliminar) usan formularios POST con `{% csrf_token %}`.
+    - Para practicar: inspecciona la vista que pasa `usuarios` y cómo se gestionan los permisos.
+-->
 {% block title %}Gestor de roles{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Control de acceso</small>
         <h1 class="mb-0">Usuarios</h1>
     </div>
     <a href="{% url 'usuarios_crear' %}" class="btn btn-primary">Crear usuario</a>
-</div>
+</header>
 
 <div class="card admin-table">
     <div class="card-body">

@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
-{% comment %} Formulario para crear una nueva cita desde el panel.
-    En POST envía: nombre_paciente, telefono, correo, fecha_cita.
-    Se valida en la vista `citas_crear` (views.py).
-{% endcomment %}
+<!--
+    Plantilla: `citas_crear.html` (extiende `base.html`).
+    Notas educativas:
+    - `{% extends 'base.html' %}` indica que esta plantilla hereda la estructura
+        de `base.html`. Los bloques (`{% block content %}`) reemplazan contenido.
+    - El formulario hace POST a la vista `citas_crear`; en la vista se validan
+        los campos y se decide qué mostrar en la respuesta.
+    - Dentro de formularios siempre se incluye `{% csrf_token %}` para seguridad.
+    - Para entender flujo: busca la función `citas_crear` en `views.py` y sigue
+        cómo envía contexto y redirecciones.
+-->
 {% block title %}Crear cita{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Nueva solicitud</small>
         <h1 class="mb-0">Crear cita</h1>
     </div>
     <a href="{% url 'citas_listar' %}" class="btn btn-outline-secondary">Volver</a>
-</div>
+</header>
 
-<div class="card form-card">
+<section class="card form-card" aria-label="Formulario crear cita">
     <div class="card-body">
         <form method="post" action="{% url 'citas_crear' %}" class="row g-4">
             {% csrf_token %}
@@ -41,5 +48,5 @@
             </div>
         </form>
     </div>
-</div>
+</section>
 {% endblock %}

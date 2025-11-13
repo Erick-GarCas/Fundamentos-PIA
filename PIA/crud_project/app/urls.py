@@ -47,10 +47,4 @@ urlpatterns = [
     path('api/tratamientos/', views.tratamientos_json, name='api_tratamientos'),
     # Registro de usuario (signup)
     path('accounts/signup/', views.signup, name='signup'),
-
-    # Rutas ejemplo para CRUD que desarrollaremos después (seguir tu ejemplo)
-    # path('listar/', views.listar_productos, name='listar'),
-    # path('crear/', views.crear_producto, name='crear'),
-    # path('editar/<int:id>/', views.editar_producto, name='editar'),
-    # path('eliminar/<int:id>/', views.eliminar_producto, name='eliminar'),
 ]

@@ -1,6 +1,17 @@
 <!doctype html>
 <html lang="es">
 {% load static %}
+
+<!--
+    Este archivo es una plantilla de Django (Django Template Language - DTL).
+    - Las etiquetas `{% ... %}` son instrucciones (control de flujo, carga de librerías, etc.).
+    - Las expresiones `{{ ... }}` imprimen valores desde el contexto que el servidor envía.
+    - Aquí usamos `{% load static %}` para poder referenciar archivos estáticos con
+        `{% static 'ruta/archivo' %}` (CSS, JS, imágenes) y que Django genere la URL correcta.
+
+    Nota para el proyecto escolar: estas instrucciones se procesan en el servidor
+    antes de que el HTML llegue al navegador; no son JavaScript.
+-->
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,8 +22,10 @@
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg admin-navbar">
+        <header>
+            <nav class="navbar navbar-expand-lg admin-navbar">
             <div class="container-fluid">
+                <!-- Logo y enlace a la página principal del panel (ruta nombrada 'listar') -->
                 <a class="navbar-brand d-flex align-items-center" href="{% url 'listar' %}">
                     <span class="brand-mark me-2">Ag</span>
                     <div>
@@ -25,25 +38,41 @@
                 </button>
                 <div class="collapse navbar-collapse" id="adminNav">
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0 admin-nav-center">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'listar' %}active{% endif %}" href="{% url 'listar' %}">Inicio</a>
-                        </li>
-                        {% if can_view_citas %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name|default:''|slice:":5" == 'citas' %}active{% endif %}" href="{% url 'citas_listar' %}">Citas</a>
-                        </li>
-                        {% endif %}
+                                                <li class="nav-item">
+                                                        <!--
+                                                            La siguiente condición añade la clase CSS `active` cuando
+                                                            la vista actual coincide con el nombre de ruta 'listar'.
+                                                            Esto permite resaltar el enlace de navegación correspondiente.
+                                                            - `request.resolver_match.url_name` es el nombre de la URL actual.
+                                                            - Si no existe, la condición simplemente no añade la clase.
+                                                        -->
+                                                        <a class="nav-link {% if request.resolver_match.url_name == 'listar' %}active{% endif %}" href="{% url 'listar' %}">Inicio</a>
+                                                </li>
+                                                {% if can_view_citas %}
+                                                <!--
+                                                    `can_view_citas` es una bandera añadida por un context processor
+                                                    (ver `app/context_processors.py`). Si es True mostramos el enlace
+                                                    al módulo de citas. La condición siguiente intenta detectar rutas
+                                                    relacionadas con 'citas' para marcar el enlace activo.
+                                                -->
+                                                <li class="nav-item">
+                                                        <a class="nav-link {% if request.resolver_match.url_name|default:''|slice:":5" == 'citas' %}active{% endif %}" href="{% url 'citas_listar' %}">Citas</a>
+                                                </li>
+                                                {% endif %}
                         {% if can_manage_tratamientos %}
+                        <!-- Mostrar enlace a tratamientos si el usuario tiene permiso. -->
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name|default:''|slice:":12" == 'tratamientos' %}active{% endif %}" href="{% url 'tratamientos_listar' %}">Tratamientos</a>
                         </li>
                         {% endif %}
                         {% if is_admin %}
+                        <!-- Enlace al gestor de usuarios: solo visible para administradores. -->
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name|default:''|slice:":7" == 'usuarios' %}active{% endif %}" href="{% url 'usuarios_listar' %}">Gestor de roles</a>
                         </li>
                         {% endif %}
                     </ul>
+                    <!-- Enlace para volver al sitio público (frontend), usa la ruta nombrada 'home'. -->
                     <a class="btn btn-outline-primary btn-sm admin-home-link me-3 d-flex align-items-center" href="{% url 'home' %}">
                         <i class="bi bi-arrow-left me-1"></i> Volver al sitio
                     </a>
@@ -65,11 +94,17 @@
                     {% endif %}
                 </div>
             </div>
-        </nav>
+                </nav>
+            </header>
 
-        <div class="container mb-5">
-            {% if messages %}
-                {% if request.path == '/' %}
+            <main class="container mb-5">
+                        {% if messages %}
+                                <!--
+                                    `messages` es el framework de mensajes de Django. Aquí mostramos
+                                    los mensajes ya sea en un modal (si estamos en la página principal)
+                                    o como alertas inline en otras páginas.
+                                -->
+                                {% if request.path == '/' %}
                     <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content border-0 shadow-lg">
@@ -105,12 +140,16 @@
                     </div>
                 {% endif %}
             {% endif %}
-            {% block content %}{% endblock %}
-        </div>
+                {% block content %}{% endblock %}
+            </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- UI helpers: tamaÃ±o de texto y modo oscuro para el panel -->
-    <script src="{% static 'js/ui_helpers.js' %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!--
+            `ui_helpers.js`: script que gestiona accesibilidad (tamaño de texto, modo oscuro)
+            y persistencia de preferencias en `localStorage`. Se carga al final para que
+            el HTML se procese primero y la experiencia sea más rápida.
+        -->
+        <script src="{% static 'js/ui_helpers.js' %}"></script>
     {% block extra_js %}{% endblock %}
     </body>
 </html>

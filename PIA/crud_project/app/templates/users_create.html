@@ -1,17 +1,23 @@
 {% extends 'base.html' %}
-{% comment %} Formulario para crear usuarios desde el panel. Al enviarse hace POST
-    a la ruta `usuarios_crear` y la vista se encarga de crear el User y asignar grupos.
-{% endcomment %}
+<!--
+    Plantilla: `users_create.html` (crear usuario desde panel).
+    Notas educativas:
+    - El formulario envía datos a la vista `usuarios_crear` que crea el `User`
+        y asigna grupos/roles según los checkbox.
+    - Los flags `role_flags` y `perm_flags` pueden usarse para preseleccionar
+        opciones cuando se edita en lugar de crear.
+    - Siempre incluir `{% csrf_token %}` en formularios POST.
+-->
 {% block title %}Crear usuario{% endblock %}
 
 {% block content %}
-<div class="admin-page-header">
+<header class="admin-page-header">
     <div>
         <small>Nuevo acceso</small>
         <h1 class="mb-0">Crear usuario</h1>
     </div>
     <a class="btn btn-outline-secondary" href="{% url 'usuarios_listar' %}">Volver</a>
-</div>
+</header>
 
 <div class="card form-card">
     <div class="card-body">
